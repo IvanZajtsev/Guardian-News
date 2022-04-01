@@ -8,10 +8,10 @@
 import Foundation
 
 struct News: Codable {
-    let response: Response?
+    var response: Response?
 }
 struct Response: Codable {
-    let results: [Article?]?
+    var results: [Article?]?
 }
 
 struct Article: Codable {

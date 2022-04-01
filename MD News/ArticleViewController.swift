@@ -34,30 +34,20 @@ class ArticleViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        label.text = header
-        textView.contentMode = .scaleToFill
-        textView.attributedText = body!.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
+        setupUI()
 
         
+    }
+    private func setupUI() {
+        tabBarController?.tabBar.isHidden = true
+        label.text = header
+        guard let body = body else { return }
+        textView.attributedText = body.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
     }
     
 }
 
-/*
-extension String {
-    var htmlToAttributedString: NSAttributedString? {
-        guard let data = data(using: .utf8) else { return nil }
-        do {
-            return try NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding:String.Encoding.utf8.rawValue, .sourceTextScaling: "9" ], documentAttributes: nil)
-        } catch {
-            return nil
-        }
-    }
-    var htmlToString: String {
-        return htmlToAttributedString?.string ?? ""
-    }
-}
-*/
+
 
 extension String {
     public var convertHtmlToNSAttributedString: NSAttributedString? {
