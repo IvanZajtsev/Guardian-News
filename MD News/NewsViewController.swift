@@ -8,7 +8,7 @@
 import UIKit
 
 class NewsViewController: UIViewController {
-    
+     
     //MARK: - Private Data Structures
     
     private enum C {
@@ -25,11 +25,19 @@ class NewsViewController: UIViewController {
     // MARK: - Private Properties
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var searchBar: UISearchBar!
     
     private var news = News(response: Response(results: [Article]()))
     
     private var images = [UIImage](repeating: C.image, count: 10)
+    
+    private let searchController = UISearchController(searchResultsController: nil)
+    
+    private var searchBarIsEmpty: Bool {
+        
+        guard let text = searchController.searchBar.text else { return false }
+        return text.isEmpty
+        
+    }
     
     // MARK: - Lifecycle
     
@@ -41,22 +49,25 @@ class NewsViewController: UIViewController {
     }
 
     // MARK: - Private methods
+    
     private func setupUI() {
         tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
-        searchBar.placeholder = " Search..."
-        searchBar.isTranslucent = false
+
         
         self.JSON(q: C.defaultQ) {
             self.downloadImages()
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
         }
-        searchBar.delegate = self
-
+            
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search ..."
         
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
         tableView.dataSource = self
         tableView.delegate = self
+        
+        
     }
     
     private func JSON(q: String, completion: @escaping () -> ()) {
@@ -65,10 +76,10 @@ class NewsViewController: UIViewController {
         
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
             
-            guard let data = data else { return }
-            guard error == nil else { return }
+            guard let data = data,
+                  error == nil else { return }
             do {
-            let answer = try JSONDecoder().decode(News.self, from: data)
+                let answer = try JSONDecoder().decode(News.self, from: data)
                 self.news = answer
                 completion()
             } catch {
@@ -80,24 +91,27 @@ class NewsViewController: UIViewController {
     
     private func downloadImages() {
         for i in 0...((self.news.response?.results?.count ?? 1) - 1) {
-            self.dowloadImage(index: i)
+            self.dowloadImage(index: i, completion: {
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                }
+            })
         }
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-        }
+        
     }
     
-    private func dowloadImage(index: Int)  {
+    private func dowloadImage(index: Int, completion: @escaping () -> ())  {
         
-        let urlString = news.response?.results?[index]?.fields?.thumbnail ?? "default"
-        guard let url = URL(string: urlString) else {return}
+        guard let urlString = news.response?.results?[index]?.fields?.thumbnail,
+              let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
             
-            guard let data = data else { return }
-            guard error == nil else { return }
-            self.images[index] = UIImage(data: data) ?? C.image
+            guard let data = data,
+                  error == nil else { return }
             
+            self.images[index] = UIImage(data: data) ?? C.image
+            completion()
         }).resume()
         
     }
@@ -139,7 +153,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
         if segue.identifier == C.segueIdentidier {
             guard let destinationVC = segue.destination as? ArticleViewController,
                   let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-            destinationVC.title = "Article"
+            destinationVC.title = news.response?.results?[selectedRow]?.webTitle
             destinationVC.body = news.response?.results?[selectedRow]?.fields?.body
             destinationVC.header = news.response?.results?[selectedRow]?.webTitle
             destinationVC.url = news.response?.results?[selectedRow]?.webUrl
@@ -148,18 +162,23 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
-    //MARK: - UISearchBarDelegate
+// MARK: - UISearchResultsUpdating
 
-extension NewsViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard searchText != "" else {return}
+extension NewsViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        // вызови филтрацию
+        
+        guard let searchText = searchController.searchBar.text,
+              !searchText.isEmpty,
+              searchText.count > 2 else { return }
         self.JSON(q: searchText, completion: {
             self.downloadImages()
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         })
+        print("updateSearchResults called")
     }
+    
+    
 }
-
-
