@@ -66,6 +66,7 @@ class NewsViewController: UIViewController {
     
     private func setupUI() {
         activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
         view.bringSubviewToFront(activityIndicator)
         searchController.searchBar.isUserInteractionEnabled = false
         
@@ -93,8 +94,12 @@ class NewsViewController: UIViewController {
         })
         
         searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search ..."
+        
+        searchController.searchBar.delegate = self
+        searchController.searchBar.enablesReturnKeyAutomatically = true
+        
+        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = "Search"
         navigationItem.searchController = searchController
         definesPresentationContext = true
         tableView.dataSource = self
@@ -202,10 +207,10 @@ class NewsViewController: UIViewController {
             }
             //            }) print(#function + "⬜️  \(Thread.current.qualityOfService.rawValue)")
         }
-        
+        completion()
         group.notify(queue: .main) {
             print("All 📸  concurrent tasks completed")
-            completion()
+            self.tableView.reloadData()
             
             
         }
@@ -318,11 +323,32 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
 extension NewsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         
+        
+    }
+    
+}
+extension NewsViewController: UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+//        print("💖")
+        searchBar.placeholder = "At least 3 symbols"
+    }
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        searchBar.placeholder = "Search"
+    }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+//        print("🟨")
         guard let searchText = searchController.searchBar.text,
               !searchText.isEmpty,
-              searchText.count > 2 else { return }
+              searchText.count > 2 else {
+                  return
+                  
+              }
         q = searchText
         currentPage = 1
+        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        view.bringSubviewToFront(activityIndicator)
         
         self.downloadJSON(q: q, completion: { [weak self] result in
             switch result {
@@ -331,6 +357,7 @@ extension NewsViewController: UISearchResultsUpdating {
                 self?.images.removeAll()
                 self?.downloadImages(from: .firstPage) {
                     DispatchQueue.main.async {
+                        self?.activityIndicator.isHidden = true
                         self?.tableView.reloadData()
                         self?.isLoadingData = false
                     }
@@ -340,7 +367,9 @@ extension NewsViewController: UISearchResultsUpdating {
                 break
             }
         })
+        
     }
+    
 }
 
 extension UIColor {

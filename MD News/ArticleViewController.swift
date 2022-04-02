@@ -95,7 +95,6 @@ extension String {
             return convertHtmlToNSAttributedString
         }
         let modifiedString = "<style> img { width: \(ArticleViewController.picWidth)px; height: \(ArticleViewController.picHeight)px; } body{font-family: '\(font.fontName)'; font-size:\(font.pointSize)px; color: \(csscolor); line-height: \(lineheight)px; text-align: \(csstextalign); }</style>\(self)";
-        print(modifiedString)
         guard let data = modifiedString.data(using: .utf8, allowLossyConversion: true) else {
             return nil
         }
