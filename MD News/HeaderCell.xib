@@ -19,32 +19,32 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pne-v6-vEj">
-                        <rect key="frame" x="0.0" y="15" width="320" height="240"/>
+                        <rect key="frame" x="0.0" y="15" width="320" height="192"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.and.arrow.down.on.square" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="nvL-GW-eSW">
-                                <rect key="frame" x="0.0" y="-1.5" width="320" height="244"/>
+                                <rect key="frame" x="0.0" y="-1.5" width="320" height="196"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="nvL-GW-eSW" firstAttribute="leading" secondItem="Pne-v6-vEj" secondAttribute="leading" id="9hV-E0-krW"/>
-                            <constraint firstAttribute="width" secondItem="Pne-v6-vEj" secondAttribute="height" multiplier="4:3" id="Qsc-q2-FkL"/>
+                            <constraint firstAttribute="width" secondItem="Pne-v6-vEj" secondAttribute="height" multiplier="5:3" id="Qsc-q2-FkL"/>
                             <constraint firstAttribute="bottom" secondItem="nvL-GW-eSW" secondAttribute="bottom" id="XS6-fe-PWD"/>
                             <constraint firstItem="nvL-GW-eSW" firstAttribute="top" secondItem="Pne-v6-vEj" secondAttribute="top" id="uP3-hy-y91"/>
                             <constraint firstAttribute="trailing" secondItem="nvL-GW-eSW" secondAttribute="trailing" id="yau-5O-m2S"/>
                         </constraints>
                     </view>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="YUa-ZM-693">
-                        <rect key="frame" x="16" y="260" width="288" height="271"/>
+                        <rect key="frame" x="16" y="212" width="288" height="319"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="61h-dI-I5V">
-                                <rect key="frame" x="0.0" y="0.0" width="288" height="130.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="288" height="154.5"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JPC-1B-Eai">
-                                <rect key="frame" x="0.0" y="140.5" width="288" height="130.5"/>
+                                <rect key="frame" x="0.0" y="164.5" width="288" height="154.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>

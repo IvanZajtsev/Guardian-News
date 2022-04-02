@@ -19,7 +19,7 @@ class NewsViewController: UIViewController {
         static let defaultQ = "world"
         static let defaultURL = leadingOfurl + defaultQ + trailingOfurl
         static let image = UIColor(displayP3Red: 15 / 255, green: 15 / 255, blue: 15 / 255, alpha: 1).image()
-        static let segueIdentidier = "toBodyScreen"
+        static let fromNewstoBodyScreen = "toBodyScreen"
     }
     enum Downloading {
         case anotherPage, firstPage
@@ -60,11 +60,18 @@ class NewsViewController: UIViewController {
         setupUI()
     
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+    }
 
     // MARK: - Private methods
     
     
     private func setupUI() {
+        
+        
+        
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
         view.bringSubviewToFront(activityIndicator)
@@ -183,6 +190,8 @@ class NewsViewController: UIViewController {
                   responseCount != 0 else { rightBound = 0; return }
             rightBound = responseCount - 1
             images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
+            print(images.count)
+            print("❌")
         }
         /*
          // 🟨 короче если новых кратинок нет то надо отед=льно это обработать!
@@ -263,7 +272,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             
-            self.performSegue(withIdentifier: C.segueIdentidier, sender: self)
+            self.performSegue(withIdentifier: C.fromNewstoBodyScreen, sender: self)
             self.tableView.deselectRow(at: indexPath, animated: true)
             
         }
@@ -271,12 +280,12 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == C.segueIdentidier {
+        if segue.identifier == C.fromNewstoBodyScreen {
             guard let destinationVC = segue.destination as? ArticleViewController,
                   let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
             destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body)"
             destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header)"
-            destinationVC.url = news.response?.results?[selectedRow]?.webUrl
+            destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url)"
         }
     }
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

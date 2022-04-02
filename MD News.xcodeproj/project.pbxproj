@@ -17,6 +17,8 @@
 		9DFDFCA927F372BF001D7100 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCA827F372BF001D7100 /* Model.swift */; };
 		9DFDFCAB27F37630001D7100 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */; };
 		9DFDFCB527F85DB8001D7100 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */; };
+		9DFDFCB727F8D0E0001D7100 /* ArticleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCB627F8D0E0001D7100 /* ArticleData.swift */; };
+		9DFDFCB927F8D215001D7100 /* DataFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCB827F8D215001D7100 /* DataFileManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +34,8 @@
 		9DFDFCA827F372BF001D7100 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
 		9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
+		9DFDFCB627F8D0E0001D7100 /* ArticleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleData.swift; sourceTree = "<group>"; };
+		9DFDFCB827F8D215001D7100 /* DataFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFileManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +71,8 @@
 				9DFDFC9027F36ED5001D7100 /* AppDelegate.swift */,
 				9DFDFC9427F36ED5001D7100 /* NewsViewController.swift */,
 				9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */,
+				9DFDFCB627F8D0E0001D7100 /* ArticleData.swift */,
+				9DFDFCB827F8D215001D7100 /* DataFileManager.swift */,
 				9DFDFCA827F372BF001D7100 /* Model.swift */,
 				9DFDFCA427F372AD001D7100 /* HeaderCell.swift */,
 				9DFDFCA527F372AD001D7100 /* HeaderCell.xib */,
@@ -151,10 +157,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DFDFCB727F8D0E0001D7100 /* ArticleData.swift in Sources */,
 				9DFDFC9527F36ED5001D7100 /* NewsViewController.swift in Sources */,
 				9DFDFCA627F372AD001D7100 /* HeaderCell.swift in Sources */,
 				9DFDFCAB27F37630001D7100 /* ArticleViewController.swift in Sources */,
 				9DFDFC9127F36ED5001D7100 /* AppDelegate.swift in Sources */,
+				9DFDFCB927F8D215001D7100 /* DataFileManager.swift in Sources */,
 				9DFDFCB527F85DB8001D7100 /* FavoritesViewController.swift in Sources */,
 				9DFDFCA927F372BF001D7100 /* Model.swift in Sources */,
 			);

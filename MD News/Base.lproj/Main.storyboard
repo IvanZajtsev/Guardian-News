@@ -21,7 +21,7 @@
                                 <rect key="frame" x="0.0" y="140" width="414" height="673"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </activityIndicatorView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="cfy-MK-TN4">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="cfy-MK-TN4">
                                 <rect key="frame" x="0.0" y="140" width="414" height="756"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </tableView>
@@ -50,21 +50,47 @@
             </objects>
             <point key="canvasLocation" x="2771.0144927536235" y="60.9375"/>
         </scene>
-        <!--View Controller-->
+        <!--Discover favorites-->
         <scene sceneID="cfZ-TU-kKS">
             <objects>
-                <viewController id="VEB-wd-3B3" sceneMemberID="viewController">
+                <viewController id="VEB-wd-3B3" customClass="FavoritesViewController" customModule="MD_News" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="CdX-sW-lIb">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="R4m-6F-VfS">
+                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="anotherReusableCell" rowHeight="86" id="vq9-lR-I51">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="86"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="vq9-lR-I51" id="pSX-7k-DJ1">
+                                            <rect key="frame" x="0.0" y="0.0" width="385.5" height="86"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="HFW-ob-Wpn"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="R4m-6F-VfS" firstAttribute="top" secondItem="HFW-ob-Wpn" secondAttribute="top" id="7us-zO-ezD"/>
+                            <constraint firstItem="R4m-6F-VfS" firstAttribute="leading" secondItem="HFW-ob-Wpn" secondAttribute="leading" id="IBB-Zd-TRd"/>
+                            <constraint firstItem="HFW-ob-Wpn" firstAttribute="bottom" secondItem="R4m-6F-VfS" secondAttribute="bottom" id="ppj-ie-QKJ"/>
+                            <constraint firstItem="HFW-ob-Wpn" firstAttribute="trailing" secondItem="R4m-6F-VfS" secondAttribute="trailing" id="wqW-mM-RCc"/>
+                        </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="cTv-K1-W0v"/>
+                    <navigationItem key="navigationItem" title="Discover favorites" largeTitleDisplayMode="always" id="I1e-9U-z6P"/>
+                    <connections>
+                        <outlet property="tableView" destination="R4m-6F-VfS" id="xMj-Wq-iW0"/>
+                        <segue destination="eXG-1z-JPa" kind="show" identifier="fromFavToBody" id="1wG-ed-tXg"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ztv-va-7U9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2791" y="721"/>
+            <point key="canvasLocation" x="2769.5652173913045" y="818.97321428571422"/>
         </scene>
         <!--Article View Controller-->
         <scene sceneID="Umj-Ha-LEY">
@@ -134,16 +160,27 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="AdK-IW-hs6">
-                        <barButtonItem key="rightBarButtonItem" title="Go To Source" id="H8M-Qj-DQN">
-                            <connections>
-                                <action selector="goToSourceTapped:" destination="eXG-1z-JPa" id="vHm-0b-9aU"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem title="Go To Source" image="network" catalog="system" id="H8M-Qj-DQN">
+                                <connections>
+                                    <action selector="goToSourceTapped:" destination="eXG-1z-JPa" id="vHm-0b-9aU"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" image="star" catalog="system" id="2XU-zL-eg9">
+                                <connections>
+                                    <action selector="addToFavoritesTapped:" destination="eXG-1z-JPa" id="I3A-dN-OJr"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem style="plain" systemItem="action" id="nF9-Hz-Itx"/>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="ihu-Im-Dtg" id="sje-jd-Aon"/>
+                        <outlet property="favoritesButton" destination="2XU-zL-eg9" id="8gk-jY-RAG"/>
+                        <outlet property="goToSourceButton" destination="H8M-Qj-DQN" id="tY5-2D-Wde"/>
                         <outlet property="label" destination="hVY-P1-Y5R" id="hzT-2E-1IC"/>
                         <outlet property="scrollView" destination="S88-l8-R9R" id="UMk-6M-CKM"/>
+                        <outlet property="shareButton" destination="nF9-Hz-Itx" id="a1g-Ny-xa9"/>
                         <outlet property="textView" destination="ImO-vb-tde" id="ABn-lK-O6J"/>
                     </connections>
                 </viewController>
@@ -222,7 +259,7 @@
                     </tabBar>
                     <connections>
                         <segue destination="4se-iY-68J" kind="relationship" relationship="viewControllers" id="tko-ar-qc9"/>
-                        <segue destination="VEB-wd-3B3" kind="relationship" relationship="viewControllers" id="1ZE-f9-5EP"/>
+                        <segue destination="Syw-UV-RCr" kind="relationship" relationship="viewControllers" id="0Km-zH-sRI"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LtJ-6H-Olf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -248,8 +285,32 @@
             </objects>
             <point key="canvasLocation" x="1860.8695652173915" y="60.9375"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="g1S-YD-hP1">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Syw-UV-RCr" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" systemItem="favorites" id="cTv-K1-W0v"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="TsO-AL-FPW">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="VEB-wd-3B3" kind="relationship" relationship="rootViewController" id="Qa9-s5-Z8W"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0M7-dc-R4q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1861" y="819"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="1wG-ed-tXg"/>
+    </inferredMetricsTieBreakers>
     <resources>
+        <image name="network" catalog="system" width="128" height="121"/>
+        <image name="star" catalog="system" width="128" height="116"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
