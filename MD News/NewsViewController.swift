@@ -21,14 +21,20 @@ class NewsViewController: UIViewController {
         static let image = UIImage(systemName: "network")!
         static let segueIdentidier = "toBodyScreen"
     }
+    enum Downloading {
+        case anotherPage, firstPage
+    }
     
     // MARK: - Private Properties
+    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var tableView: UITableView!
     
     private var news = News(response: Response(results: [Article]()))
     
-    private var images = [UIImage](repeating: C.image, count: 10)
+    private var images = [UIImage]()
+    //[UIImage](repeating: C.image, count: 10)
     
     private let searchController = UISearchController(searchResultsController: nil)
     
@@ -60,6 +66,10 @@ class NewsViewController: UIViewController {
     
     
     private func setupUI() {
+        activityIndicator.startAnimating()
+        view.bringSubviewToFront(activityIndicator)
+        searchController.searchBar.isUserInteractionEnabled = false
+        
         tabBarController?.tabBar.isHidden = false
         tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
         tableView.estimatedRowHeight = 560
@@ -68,11 +78,13 @@ class NewsViewController: UIViewController {
             switch result {
             case .success(let moreData):
                 self?.news = moreData
-                self?.downloadImages {
+                self?.downloadImages(from: .firstPage) {
                     print("😳 loaded start pages")
                     DispatchQueue.main.async {
                         self?.tableView.reloadData()
                         self?.isLoadingData = false
+                        self?.activityIndicator.isHidden = true
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
                     }
                 }
             case .failure(_):
@@ -84,7 +96,6 @@ class NewsViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search ..."
-        
         navigationItem.searchController = searchController
         definesPresentationContext = true
         tableView.dataSource = self
@@ -129,19 +140,54 @@ class NewsViewController: UIViewController {
         
     }
     
-    private func downloadImages(completion: @escaping () -> ()) {
+    private func downloadImages(from: Downloading, completion: @escaping () -> ()) {
         
         let group = DispatchGroup()
         
         var count = 0
         
-        if let safeCount = self.news.response?.results?.count {
-            count = safeCount - 1
-        } else {
-            count = 0
+        var leftBound = 0
+        
+        var rightBound = 0
+        
+        switch from {
+        case .anotherPage:
+            if let newCountOfArticles = self.news.response?.results?.count   {
+//                🅰️ здесь все таки надо работать не со всем списком саттьей, в котором есть и новые, а только с новыми
+                // а то вдруг новые не могут скачаться и мы весь массив убьем....
+                count = newCountOfArticles
+            } else {
+    //            count = 0
+                count = images.count
+            }
+            let countOfNewImages = (self.news.response?.results?.count ?? images.count) - images.count
+            print("countOfNewImages = " + "\(countOfNewImages)")
+            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
+            print("images.count = " + "\(  images.count)")
+            
+            
+            if countOfNewImages == 0 {
+                return
+            }
+            print(countOfNewImages)
+            leftBound = count - countOfNewImages
+            rightBound = count - 1
+            images += [UIImage](repeating: C.image, count: countOfNewImages)
+        case .firstPage:
+            leftBound = 0
+            guard let responseCount = self.news.response?.results?.count,
+                  responseCount != 0 else { rightBound = 0; return }
+            rightBound = responseCount - 1
+            images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
         }
-        images = [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
-        for i in 0...(count) {
+        /*
+         
+         
+         // 🟨 короче если новых кратинок нет то надо отед=льно это обработать!
+         // count - countOfNewImages ... count - 1
+         */
+        //        for i in count - countOfNewImages...(count - 1) {
+        for i in leftBound...rightBound {
             group.enter()
             self.downloadImage(index: i) { [weak self] result in
                 print("task № \(i)  ✅")
@@ -249,7 +295,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
                 switch result {
                 case .success(let moreData):
                     self?.news.response!.results! += moreData.response!.results!
-                    self?.downloadImages {
+                    self?.downloadImages(from: .anotherPage) {
                         
                         DispatchQueue.main.async {
                             self?.tableView.tableFooterView = nil
@@ -276,11 +322,14 @@ extension NewsViewController: UISearchResultsUpdating {
               !searchText.isEmpty,
               searchText.count > 2 else { return }
         q = searchText
+        currentPage = 1
+        
         self.downloadJSON(q: q, completion: { [weak self] result in
             switch result {
             case .success(let moreData):
                 self?.news = moreData
-                self?.downloadImages {
+                self?.images.removeAll()
+                self?.downloadImages(from: .firstPage) {
                     DispatchQueue.main.async {
                         self?.tableView.reloadData()
                         self?.isLoadingData = false

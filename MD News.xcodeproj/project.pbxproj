@@ -16,6 +16,7 @@
 		9DFDFCA727F372AD001D7100 /* HeaderCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9DFDFCA527F372AD001D7100 /* HeaderCell.xib */; };
 		9DFDFCA927F372BF001D7100 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCA827F372BF001D7100 /* Model.swift */; };
 		9DFDFCAB27F37630001D7100 /* ArticleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */; };
+		9DFDFCB527F85DB8001D7100 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		9DFDFCA527F372AD001D7100 /* HeaderCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderCell.xib; sourceTree = "<group>"; };
 		9DFDFCA827F372BF001D7100 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArticleViewController.swift; sourceTree = "<group>"; };
+		9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				9DFDFC9927F36ED6001D7100 /* Assets.xcassets */,
 				9DFDFC9B27F36ED6001D7100 /* LaunchScreen.storyboard */,
 				9DFDFC9E27F36ED6001D7100 /* Info.plist */,
+				9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */,
 			);
 			path = "MD News";
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 				9DFDFCA627F372AD001D7100 /* HeaderCell.swift in Sources */,
 				9DFDFCAB27F37630001D7100 /* ArticleViewController.swift in Sources */,
 				9DFDFC9127F36ED5001D7100 /* AppDelegate.swift in Sources */,
+				9DFDFCB527F85DB8001D7100 /* FavoritesViewController.swift in Sources */,
 				9DFDFCA927F372BF001D7100 /* Model.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
