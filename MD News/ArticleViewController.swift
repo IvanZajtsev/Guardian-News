@@ -11,9 +11,8 @@ import UIKit
 class ArticleViewController: UIViewController {
     
     
-    
-    var body: String?
-    var header: String?
+    var body: String = "Loading..."
+    var header: String = "Loading..."
     var url: String?
     
     @IBOutlet weak var label: UILabel!
@@ -21,6 +20,8 @@ class ArticleViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     
     @IBOutlet weak var textView: UITextView!
+    
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     static var picWidth = 0
     static var picHeight = 0
@@ -46,17 +47,26 @@ class ArticleViewController: UIViewController {
         
     }
     private func setupUI() {
-        
-        textView.gestureRecognizers?.forEach({ rec in
-            print(rec)
-        })
-        
+        label.isHidden = true
+        textView.isHidden = true
+        activityIndicator.startAnimating()
+
         tabBarController?.tabBar.isHidden = true
         label.text = header
-        guard let body = body else { return }
+
         ArticleViewController.picWidth = Int(round(textView.frame.size.width * 0.87))
         ArticleViewController.picHeight = Int(round(textView.frame.size.width * 0.87 * 0.6))
-        textView.attributedText = body.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
+        print("🅰️до установки аттрибутированного текста")
+        
+        DispatchQueue.main.async {
+            self.textView.attributedText = self.body.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
+            self.activityIndicator.isHidden = true
+            self.label.isHidden = false
+            self.textView.isHidden = false
+            print("✅после установки аттрибутированного текста")
+
+        }
+
         
 
     }

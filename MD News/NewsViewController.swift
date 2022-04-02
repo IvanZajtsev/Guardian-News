@@ -18,7 +18,7 @@ class NewsViewController: UIViewController {
         static let trailingOfurl = "api-key=908cb2e6-b6b3-4c92-87db-34afa38367d7&format=json&show-fields=thumbnail,trailText,body"
         static let defaultQ = "world"
         static let defaultURL = leadingOfurl + defaultQ + trailingOfurl
-        static let image = UIImage(systemName: "network")!
+        static let image = UIColor(displayP3Red: 15 / 255, green: 15 / 255, blue: 15 / 255, alpha: 1).image()
         static let segueIdentidier = "toBodyScreen"
     }
     enum Downloading {
@@ -28,13 +28,12 @@ class NewsViewController: UIViewController {
     // MARK: - Private Properties
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
+   
     @IBOutlet weak var tableView: UITableView!
     
     private var news = News(response: Response(results: [Article]()))
     
     private var images = [UIImage]()
-    //[UIImage](repeating: C.image, count: 10)
     
     private let searchController = UISearchController(searchResultsController: nil)
     
@@ -161,9 +160,9 @@ class NewsViewController: UIViewController {
                 count = images.count
             }
             let countOfNewImages = (self.news.response?.results?.count ?? images.count) - images.count
-            print("countOfNewImages = " + "\(countOfNewImages)")
-            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
-            print("images.count = " + "\(  images.count)")
+//            print("countOfNewImages = " + "\(countOfNewImages)")
+//            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
+//            print("images.count = " + "\(  images.count)")
             
             
             if countOfNewImages == 0 {
@@ -181,8 +180,6 @@ class NewsViewController: UIViewController {
             images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
         }
         /*
-         
-         
          // 🟨 короче если новых кратинок нет то надо отед=льно это обработать!
          // count - countOfNewImages ... count - 1
          */
@@ -218,9 +215,9 @@ class NewsViewController: UIViewController {
         
         guard let urlString = news.response?.results?[index]?.fields?.thumbnail,
               let url = URL(string: urlString) else { return }
-        print(#function + "😳  \(Thread.current.qualityOfService.rawValue)")
+//        print(#function + "😳  \(Thread.current.qualityOfService.rawValue)")
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
-            print(#function + "✅  \(Thread.current.qualityOfService.rawValue)")
+//            print(#function + "✅  \(Thread.current.qualityOfService.rawValue)")
             guard let data = data,
                   error == nil else {
                       // completion(.failure())
@@ -259,20 +256,21 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        DispatchQueue.main.async {
+            
+            self.performSegue(withIdentifier: C.segueIdentidier, sender: self)
+            self.tableView.deselectRow(at: indexPath, animated: true)
+            
+        }
         
-        self.performSegue(withIdentifier: C.segueIdentidier, sender: self)
-        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
         if segue.identifier == C.segueIdentidier {
-            
             guard let destinationVC = segue.destination as? ArticleViewController,
                   let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-            
-            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body
-            destinationVC.header = news.response?.results?[selectedRow]?.webTitle
+            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body)"
+            destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header)"
             destinationVC.url = news.response?.results?[selectedRow]?.webUrl
         }
     }
@@ -288,6 +286,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
                 return
             }
             self.tableView.tableFooterView = createSpinnerFooter()
+            searchController.searchBar.isUserInteractionEnabled = false
             print("✅ loading")
             currentPage += 1
             downloadJSON(q: q, completion: { [weak self] result in
@@ -299,6 +298,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
                         
                         DispatchQueue.main.async {
                             self?.tableView.tableFooterView = nil
+                            self?.searchController.searchBar.isUserInteractionEnabled = true
                             self?.tableView.reloadData()
                             self?.isLoadingData = false
                         }
@@ -341,4 +341,14 @@ extension NewsViewController: UISearchResultsUpdating {
             }
         })
     }
+}
+
+extension UIColor {
+    func image(_ size: CGSize = CGSize(width: 5, height: 3)) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { rendererContext in
+            self.setFill()
+            rendererContext.fill(CGRect(origin: .zero, size: size))
+        }
+    }
+    
 }
