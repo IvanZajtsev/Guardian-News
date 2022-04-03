@@ -15,6 +15,8 @@ class FavoritesViewController: UIViewController {
         static let segueIdentifier = "fromFavToBody"
     }
     
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     @IBOutlet weak var tableView: UITableView!
     
     var arcticles: [ArticleData] = []
@@ -29,9 +31,15 @@ class FavoritesViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        
+        activityIndicator.startAnimating()
+        activityIndicator.isHidden = false
+        view.bringSubviewToFront(activityIndicator)
+        
         loadArticlesFromPList()
         tabBarController?.tabBar.isHidden = false
         DispatchQueue.main.async {
+            self.activityIndicator.isHidden = true
             self.tableView.reloadData()
         }
 //        let manager = DataFileManager()

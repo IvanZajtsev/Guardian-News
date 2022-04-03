@@ -58,8 +58,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Sjn-rK-qao">
+                                <rect key="frame" x="0.0" y="140" width="414" height="673"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            </activityIndicatorView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="R4m-6F-VfS">
-                                <rect key="frame" x="0.0" y="88" width="414" height="725"/>
+                                <rect key="frame" x="0.0" y="140" width="414" height="673"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="anotherReusableCell" rowHeight="86" id="vq9-lR-I51">
@@ -76,14 +80,19 @@
                         <viewLayoutGuide key="safeArea" id="HFW-ob-Wpn"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="Sjn-rK-qao" firstAttribute="top" secondItem="HFW-ob-Wpn" secondAttribute="top" id="2di-pk-sTV"/>
                             <constraint firstItem="R4m-6F-VfS" firstAttribute="top" secondItem="HFW-ob-Wpn" secondAttribute="top" id="7us-zO-ezD"/>
+                            <constraint firstItem="Sjn-rK-qao" firstAttribute="trailing" secondItem="HFW-ob-Wpn" secondAttribute="trailing" id="FGk-BY-e1B"/>
                             <constraint firstItem="R4m-6F-VfS" firstAttribute="leading" secondItem="HFW-ob-Wpn" secondAttribute="leading" id="IBB-Zd-TRd"/>
+                            <constraint firstItem="Sjn-rK-qao" firstAttribute="leading" secondItem="HFW-ob-Wpn" secondAttribute="leading" id="gVJ-ec-Noj"/>
                             <constraint firstItem="HFW-ob-Wpn" firstAttribute="bottom" secondItem="R4m-6F-VfS" secondAttribute="bottom" id="ppj-ie-QKJ"/>
                             <constraint firstItem="HFW-ob-Wpn" firstAttribute="trailing" secondItem="R4m-6F-VfS" secondAttribute="trailing" id="wqW-mM-RCc"/>
+                            <constraint firstItem="HFW-ob-Wpn" firstAttribute="bottom" secondItem="Sjn-rK-qao" secondAttribute="bottom" id="y7k-9l-TSB"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Discover favorites" largeTitleDisplayMode="always" id="I1e-9U-z6P"/>
                     <connections>
+                        <outlet property="activityIndicator" destination="Sjn-rK-qao" id="ZJn-dm-zSs"/>
                         <outlet property="tableView" destination="R4m-6F-VfS" id="xMj-Wq-iW0"/>
                         <segue destination="eXG-1z-JPa" kind="show" identifier="fromFavToBody" id="1wG-ed-tXg"/>
                     </connections>

@@ -67,10 +67,7 @@ class NewsViewController: UIViewController {
 
     // MARK: - Private methods
     
-    
     private func setupUI() {
-        
-        
         
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
@@ -130,6 +127,7 @@ class NewsViewController: UIViewController {
         isLoadingData = true
         
         let urlString = createURL(with: q)
+        print("URL: " + "\(urlString)")
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
@@ -304,7 +302,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
             print("✅ loading")
             currentPage += 1
             downloadJSON(q: q, completion: { [weak self] result in
-
+                
                 switch result {
                 case .success(let moreData):
                     self?.news.response!.results! += moreData.response!.results!
