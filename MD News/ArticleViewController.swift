@@ -96,7 +96,10 @@ class ArticleViewController: UIViewController {
             do {
                 try manager.saveArticleData(ArticleData(labelText: self.header, bodyText: self.modifiedBody, url: self.url))
                 self.activityIndicator.isHidden = true
-                print("😆 Success")
+                let alert = UIAlertController(title: "Saved to favorites", message: "", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true)
+//                print("😆 Success")
             } catch {
                 print(error)
                 // покажи алерт....

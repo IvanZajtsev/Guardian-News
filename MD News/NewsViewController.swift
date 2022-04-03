@@ -6,7 +6,10 @@
 //
 
 import UIKit
-
+import Network
+enum PossibleErrors: Error {
+  case httpError
+}
 class NewsViewController: UIViewController {
     
     //MARK: - Private Data Structures
@@ -58,6 +61,7 @@ class NewsViewController: UIViewController {
         
         super.viewDidLoad()
         setupUI()
+        monitorNetwork()
     
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -76,7 +80,7 @@ class NewsViewController: UIViewController {
         
         tabBarController?.tabBar.isHidden = false
         tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
-        tableView.estimatedRowHeight = 560
+        tableView.estimatedRowHeight = 470
         
         self.downloadJSON(q: C.defaultQ, completion: { [weak self] result in
             switch result {
@@ -91,13 +95,19 @@ class NewsViewController: UIViewController {
                         self?.searchController.searchBar.isUserInteractionEnabled = true
                     }
                 }
-            case .failure(_):
-                
-                //🟨 либо 404
-                
-                //🟨 либо ошибка декодирования
-                
-                break
+            case .failure(let error):
+                if error is PossibleErrors {
+//                    print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️")
+                    DispatchQueue.main.async {
+                        self?.showSimpleOKAlert(with: "Error whit HTTP request", and: "Search through text field")
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.tableView.tableFooterView = nil
+                        self?.isLoadingData = false
+                        self?.activityIndicator.isHidden = true
+                    }
+                } else {
+                    // TODO: случилась ошибка в декодировании этой ..., обработай меня
+                }
             }
             
         })
@@ -115,6 +125,31 @@ class NewsViewController: UIViewController {
         tableView.delegate = self
         
         
+    }
+    private func showSimpleOKAlert(with alertTitle: String, and alertMessage: String) {
+        let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true) 
+        
+    }
+    
+    private func monitorNetwork() {
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                DispatchQueue.main.sync {
+                   print("✅connect")
+                }
+            } else {
+                DispatchQueue.main.async {
+                    
+                    print("❌disconnect")
+                    self.showSimpleOKAlert(with: "No connection", and: "Ensure you have connection")
+                }
+            }
+        }
+        let queue = DispatchQueue(label: "Network")
+        monitor.start(queue: queue)
     }
     
     private func createSpinnerFooter() -> UIView{
@@ -141,30 +176,20 @@ class NewsViewController: UIViewController {
                   let statusCode = (response as? HTTPURLResponse)?.statusCode,
                   200...299 ~= statusCode,
                   error == nil else {
-                      
-                      // TODO: completion(.failure(error!))
-                      // TODO: убрать форсе анвреп и мб сделать другие кейсы для ошибок? мб так что дата нил а ошибка не нил и ляжет приложение
-                      
-                      
-                      print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️" + "\(data)" + "\(response)" + "\(error)")
-                      DispatchQueue.main.async {
-                          self.searchController.searchBar.isUserInteractionEnabled = true
-                          self.tableView.tableFooterView = nil
-                          self.isLoadingData = false
-                      }
-                      
-
-                    
+                      completion(.failure(PossibleErrors.httpError))
+                      print("completion(.failure(PossibleErrors.httpError))")
                       return
                   }
             do {
                 let answer = try JSONDecoder().decode(News.self, from: data)
                 
-                //✅ про изображения тоже нужен completion
+                
                 completion(.success(answer))
+                print("completion(.success(answer))")
             } catch {
                 completion(.failure(error))
                 print(error)
+                print("completion(.failure(error))")
             }
             
             
@@ -177,19 +202,16 @@ class NewsViewController: UIViewController {
         let group = DispatchGroup()
         
         var count = 0
-        
         var leftBound = 0
-        
         var rightBound = 0
         
         switch from {
+            
         case .anotherPage:
-            if let newCountOfArticles = self.news.response?.results?.count   {
-                //                🅰️ здесь все таки надо работать не со всем списком саттьей, в котором есть и новые, а только с новыми
-                // а то вдруг новые не могут скачаться и мы весь массив убьем....
+            
+            if let newCountOfArticles = self.news.response?.results?.count {
                 count = newCountOfArticles
             } else {
-                //            count = 0
                 count = images.count
             }
             let countOfNewImages = (self.news.response?.results?.count ?? images.count) - images.count
@@ -197,65 +219,76 @@ class NewsViewController: UIViewController {
             //            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
             //            print("images.count = " + "\(  images.count)")
             
-            
             if countOfNewImages == 0 {
+                completion()
                 return
             }
-//            print(countOfNewImages)
+            
             leftBound = count - countOfNewImages
             rightBound = count - 1
+            
             images += [UIImage](repeating: C.image, count: countOfNewImages)
+            
         case .firstPage:
+            
             leftBound = 0
-            guard let responseCount = self.news.response?.results?.count,
-                  responseCount != 0 else { rightBound = 0; return }
-            rightBound = responseCount - 1
-            images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
-//            print(images.count)
-//            print("❌")
-        }
-        /*
-         // 🟨 короче если новых кратинок нет то надо отед=льно это обработать!
-         // count - countOfNewImages ... count - 1
-         */
-        //        for i in count - countOfNewImages...(count - 1) {
-        for i in leftBound...rightBound {
-            group.enter()
-            self.downloadImage(index: i) { [weak self] result in
-                print("task № \(i)  ✅")
-                
-                switch result {
-                    
-                case .success(let image):
-                    
-                    self?.images[i] = image
-                    
-                case .failure(_):
-                    break
-                }
-                group.leave()
+            
+            if let responseCount = self.news.response?.results?.count, responseCount != 0 {
+                rightBound = responseCount - 1
+            } else {
+                rightBound = 0
             }
-            //            }) print(#function + "⬜️  \(Thread.current.qualityOfService.rawValue)")
+            
+            images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
+        }
+
+        if rightBound != 0 {
+            for i in leftBound...rightBound {
+                group.enter()
+                self.downloadImage(index: i) { [weak self] result in
+                    print("task № \(i)  ✅")
+                    
+                    switch result {
+                        
+                    case .success(let image):
+                        
+                        self?.images[i] = image
+                        
+                    case .failure(_):
+                        // TODO: обработать этот кейс
+                        // вообще тут обр кейс httpError
+                        break
+                    }
+                    group.leave()
+                }
+               
+            }
         }
         completion()
+        if rightBound == 0 {
+            DispatchQueue.main.async {
+                self.showSimpleOKAlert(with: "No results", and: "Search through text field")
+            }
+        }
         group.notify(queue: .main) {
             print("All 📸  concurrent tasks completed")
             self.tableView.reloadData()
-            
-            
         }
+        
     }
     
     private func downloadImage(index: Int, completion: @escaping (Result<UIImage, Error>) -> ())  {
         
-        guard let urlString = news.response?.results?[index]?.fields?.thumbnail,
+        guard let results = news.response?.results,
+              !results.isEmpty,
+              let urlString = news.response?.results?[index]?.fields?.thumbnail,
               let url = URL(string: urlString) else { return }
-        //        print(#function + "😳  \(Thread.current.qualityOfService.rawValue)")
+        // TODO: сделать обработку ошибки http error
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
-            //            print(#function + "✅  \(Thread.current.qualityOfService.rawValue)")
+
             guard let data = data,
                   error == nil else {
-                      // completion(.failure())
+                      // TODO: completion(.httpError)
                       return
                   }
             completion(.success(UIImage(data: data) ?? C.image))
@@ -304,31 +337,47 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
         if segue.identifier == C.fromNewstoBodyScreen {
             guard let destinationVC = segue.destination as? ArticleViewController,
                   let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body)"
-            destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header)"
-            destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url)"
+            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body"
+            destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header"
+            destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url"
         }
     }
+    
+    // MARK: - ScrollView method
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
         let position = scrollView.contentOffset.y
-        if position > (tableView.contentSize.height - (100 + scrollView.frame.size.height)) {
+        let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
+        if position + scrollView.frame.size.height -  tabBarHeight > tableView.contentSize.height + 40 {
             // fetch more data
             // продолжаем, если процесс НЕ запущен
             guard !isLoadingData else {
                 // we are already fetching more data
-//                print("⚠️we are already fetching more data")
                 return
             }
+            guard (news.response?.pages ?? -1 ) != currentPage && (news.response?.pages ?? -1 ) != 0 else {
+                
+//                print("🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈")
+                DispatchQueue.main.async {
+                    self.showSimpleOKAlert(with: "No more articles", and: "Search through text field")
+                    self.searchController.searchBar.isUserInteractionEnabled = true
+                    self.tableView.tableFooterView = nil
+                    self.isLoadingData = false
+                }
+                return
+            }
+            
             self.tableView.tableFooterView = createSpinnerFooter()
             searchController.searchBar.isUserInteractionEnabled = false
-            print("✅ loading")
+//            print("✅ loading")
+            
             currentPage += 1
+            
             downloadJSON(q: q, completion: { [weak self] result in
                 
                 switch result {
                 case .success(let moreData):
-//                    print(moreData.response!)
                     self?.news.response!.results! += moreData.response!.results!
                     self?.downloadImages(from: .anotherPage) {
                         
@@ -340,8 +389,20 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
                         }
                     }
                     
-                case .failure(_):
-                    break
+                case .failure(let error):
+                    if error is PossibleErrors {
+                        
+                        self?.currentPage -= 1
+//                        print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️ current page " + "\(self?.currentPage)" + "\(self?.news.response?.pages)")
+                        DispatchQueue.main.async {
+                            self?.showSimpleOKAlert(with: "Error whit HTTP request", and: "Search through text field")
+                            self?.searchController.searchBar.isUserInteractionEnabled = true
+                            self?.tableView.tableFooterView = nil
+                            self?.isLoadingData = false
+                        }
+                    } else {
+                        // TODO: случилась ошибка в декодировании этой ..., обработай меня
+                    }
                 }
                 
             })
@@ -354,32 +415,36 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
 extension NewsViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         
-        
     }
     
 }
+
+// MARK: - UISearchBarDelegate
 extension NewsViewController: UISearchBarDelegate {
+    
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-//        print("💖")
         searchBar.placeholder = "At least 3 symbols"
     }
+    
     func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
         searchBar.placeholder = "Search"
     }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-//        print("🟨")
         guard let searchText = searchController.searchBar.text,
               !searchText.isEmpty,
               searchText.count > 2 else {
                   return
-                  
               }
-        q = searchText
+        q = searchText.filter {!$0.isWhitespace}
+        
         currentPage = 1
         
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
         view.bringSubviewToFront(activityIndicator)
+        
+        searchController.searchBar.isUserInteractionEnabled = false
         
         self.downloadJSON(q: q, completion: { [weak self] result in
             switch result {
@@ -388,14 +453,26 @@ extension NewsViewController: UISearchBarDelegate {
                 self?.images.removeAll()
                 self?.downloadImages(from: .firstPage) {
                     DispatchQueue.main.async {
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
                         self?.activityIndicator.isHidden = true
                         self?.tableView.reloadData()
                         self?.isLoadingData = false
                     }
                 }
                 
-            case .failure(_):
-                break
+            case .failure(let error):
+                if error is PossibleErrors {
+//                    print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️")
+                    DispatchQueue.main.async {
+                        self?.showSimpleOKAlert(with: "Error whit HTTP request", and: "Search through text field")
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.tableView.tableFooterView = nil
+                        self?.isLoadingData = false
+                        self?.activityIndicator.isHidden = true
+                    }
+                } else {
+                    // TODO: случилась ошибка в декодировании этой ..., обработай меня
+                }
             }
         })
         

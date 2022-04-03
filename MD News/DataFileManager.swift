@@ -25,21 +25,21 @@ class DataFileManager {
         let data = try encoder.encode(oldData)
         try data.write(to: path)
     }
-    func encodeNSAttribitedString(attributedString: NSAttributedString) -> Data {
-        //🅰️ эта функция будет throws???
-        
-        do {
-            let htmlData = try attributedString.data(from: .init(location: 0, length: attributedString.length),
-                                                     documentAttributes: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue])
-            return htmlData
-            //            let htmlString = String(data: htmlData, encoding: .utf8) ?? ""
-            //            print(htmlString)
-        } catch {
-            print(error)
-            return Data()
-        }
-        
-    }
+//    func encodeNSAttribitedString(attributedString: NSAttributedString) -> Data {
+//        //🅰️ эта функция будет throws???
+//
+//        do {
+//            let htmlData = try attributedString.data(from: .init(location: 0, length: attributedString.length),
+//                                                     documentAttributes: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue])
+//            return htmlData
+//            //            let htmlString = String(data: htmlData, encoding: .utf8) ?? ""
+//            //            print(htmlString)
+//        } catch {
+//            print(error)
+//            return Data()
+//        }
+//
+//    }
     
     func loadArticleData() -> [ArticleData] {
         
@@ -58,16 +58,16 @@ class DataFileManager {
         }
     }
     
-    func decodeNSAttribitedString(from data: Data) -> NSAttributedString? {
-        //🅰️ эта функция будет throws???
-        do {
-            return try NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)
-        }
-        catch {
-            print(error)
-            return nil
-        }
-    }
+//    func decodeNSAttribitedString(from data: Data) -> NSAttributedString? {
+//        //🅰️ эта функция будет throws???
+//        do {
+//            return try NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.html, .characterEncoding: String.Encoding.utf8.rawValue], documentAttributes: nil)
+//        }
+//        catch {
+//            print(error)
+//            return nil
+//        }
+//    }
 }
 //    private func saveImageToDocumentDirectory(imageData: Data?) throws {
 //        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
