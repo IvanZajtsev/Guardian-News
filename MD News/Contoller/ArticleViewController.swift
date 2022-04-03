@@ -36,6 +36,12 @@ class ArticleViewController: UIViewController {
     
     // MARK: - Actions
     
+    @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
+        
+        let vc = UIActivityViewController(activityItems: [url], applicationActivities: [])
+        present(vc, animated: true)
+    }
+    
     @IBAction func addToFavoritesTapped(_ sender: UIBarButtonItem) {
         addToFavorites()
     }
@@ -59,22 +65,28 @@ class ArticleViewController: UIViewController {
     // MARK: - Private methods
     
     private func setupUI() {
+        
+        label.text = header
+        
         label.isHidden = true
         textView.isHidden = true
+        
         goToSourceButton.isEnabled = false
         favoritesButton.isEnabled = false
         shareButton.isEnabled = false
+        
         activityIndicator.startAnimating()
         
         tabBarController?.tabBar.isHidden = true
-        label.text = header
         
         ArticleViewController.picWidth = Int(round(textView.frame.size.width * 0.87))
         ArticleViewController.picHeight = Int(round(textView.frame.size.width * 0.87 * 0.6))
-        print("🅰️до установки аттрибутированного текста")
-        modifiedBody = body.createModifiedHTMLString(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
+        
+        modifiedBody = body.createModifiedHTMLString(font: UIFont(name: "PingFang HK", size: 20), csscolor: "white", lineheight: 12, csstextalign: "natural")
+        
         DispatchQueue.main.async {
-            self.attributedString = self.body.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural") ?? NSAttributedString()
+            
+            self.attributedString = self.body.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "PingFang HK", size: 20), csscolor: "white", lineheight: 12, csstextalign: "natural") ?? NSAttributedString()
             self.textView.attributedText = self.attributedString
             self.activityIndicator.isHidden = true
             self.label.isHidden = false
@@ -82,16 +94,16 @@ class ArticleViewController: UIViewController {
             self.goToSourceButton.isEnabled = true
             if !self.isFavScreenOpened { self.favoritesButton.isEnabled = true }
             self.shareButton.isEnabled = true
-            print("✅после установки аттрибутированного текста")
-
+            
         }
     }
     
     private func addToFavorites() {
+        
         let manager = DataFileManager()
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
-//        let dataOfAttributedString = manager.encodeNSAttribitedString(attributedString: attributedString)
+
         DispatchQueue.main.async {
             do {
                 try manager.saveArticleData(ArticleData(labelText: self.header, bodyText: self.modifiedBody, url: self.url))
@@ -99,10 +111,9 @@ class ArticleViewController: UIViewController {
                 let alert = UIAlertController(title: "Saved to favorites", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
                 self.present(alert, animated: true)
-//                print("😆 Success")
+                
             } catch {
                 print(error)
-                // покажи алерт....
             }
         }
     }
@@ -124,7 +135,7 @@ extension String {
         }
     }
     public func createModifiedHTMLString(font: UIFont? , csscolor: String , lineheight: Int, csstextalign: String) -> String {
-        let safeFont = font ?? UIFont(name: "Arial", size: 20)!
+        let safeFont = font ?? UIFont(name: "PingFang HK", size: 20)!
         return "<style> img { width: \(ArticleViewController.picWidth)px; height: \(ArticleViewController.picHeight)px; } body{font-family: '\(safeFont.fontName)'; font-size:\(safeFont.pointSize)px; color: \(csscolor); line-height: \(lineheight)px; text-align: \(csstextalign); }</style>\(self)"
     }
     public func convertHtmlToAttributedStringWithCSS(font: UIFont? , csscolor: String , lineheight: Int, csstextalign: String) -> NSAttributedString? {

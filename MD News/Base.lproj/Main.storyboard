@@ -180,7 +180,11 @@
                                     <action selector="addToFavoritesTapped:" destination="eXG-1z-JPa" id="I3A-dN-OJr"/>
                                 </connections>
                             </barButtonItem>
-                            <barButtonItem style="plain" systemItem="action" id="nF9-Hz-Itx"/>
+                            <barButtonItem systemItem="action" id="nF9-Hz-Itx">
+                                <connections>
+                                    <action selector="shareButtonPressed:" destination="eXG-1z-JPa" id="puG-yE-tv8"/>
+                                </connections>
+                            </barButtonItem>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
@@ -196,64 +200,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bFk-iY-1J5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3657.971014492754" y="60.9375"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="tdj-C0-uGm">
-            <objects>
-                <viewController id="wSO-nC-BKy" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Vkl-Iz-v5d">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fqx-Eb-JHr">
-                                <rect key="frame" x="0.0" y="44" width="414" height="852"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pQ1-wd-DEt">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="203.5"/>
-                                        <subviews>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="rDf-ga-oRz">
-                                                <rect key="frame" x="10" y="10" width="394" height="183.5"/>
-                                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                                <color key="textColor" systemColor="labelColor"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                            </textView>
-                                        </subviews>
-                                        <color key="backgroundColor" systemColor="systemGreenColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="rDf-ga-oRz" secondAttribute="trailing" constant="10" id="36F-2K-cWZ"/>
-                                            <constraint firstItem="rDf-ga-oRz" firstAttribute="leading" secondItem="pQ1-wd-DEt" secondAttribute="leading" constant="10" id="hVj-UJ-kNW"/>
-                                            <constraint firstAttribute="bottom" secondItem="rDf-ga-oRz" secondAttribute="bottom" constant="10" id="mJO-3S-ITH"/>
-                                            <constraint firstItem="rDf-ga-oRz" firstAttribute="top" secondItem="pQ1-wd-DEt" secondAttribute="top" constant="10" id="rp6-2y-ftV"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="pQ1-wd-DEt" secondAttribute="bottom" id="59r-0D-RgF"/>
-                                    <constraint firstItem="pQ1-wd-DEt" firstAttribute="width" secondItem="Fqx-Eb-JHr" secondAttribute="width" id="GWb-Lz-TRG"/>
-                                    <constraint firstItem="pQ1-wd-DEt" firstAttribute="leading" secondItem="Fqx-Eb-JHr" secondAttribute="leading" id="Xe8-c8-9Bn"/>
-                                    <constraint firstAttribute="trailing" secondItem="pQ1-wd-DEt" secondAttribute="trailing" id="bHC-dj-lyZ"/>
-                                    <constraint firstItem="pQ1-wd-DEt" firstAttribute="top" secondItem="Fqx-Eb-JHr" secondAttribute="top" id="lrY-dQ-5vm"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="g6f-0f-qJm"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="LQi-nY-llO"/>
-                            </scrollView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="hL5-Kr-VU8"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstAttribute="bottom" secondItem="Fqx-Eb-JHr" secondAttribute="bottom" id="AJJ-kH-ktu"/>
-                            <constraint firstItem="Fqx-Eb-JHr" firstAttribute="top" secondItem="hL5-Kr-VU8" secondAttribute="top" id="Bl6-Dg-AKo"/>
-                            <constraint firstItem="Fqx-Eb-JHr" firstAttribute="trailing" secondItem="hL5-Kr-VU8" secondAttribute="trailing" id="Orx-6b-jBp"/>
-                            <constraint firstItem="Fqx-Eb-JHr" firstAttribute="leading" secondItem="hL5-Kr-VU8" secondAttribute="leading" id="Uwz-sZ-hoQ"/>
-                        </constraints>
-                    </view>
-                    <size key="freeformSize" width="414" height="896"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="1I8-lb-hu5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="4812" y="80"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="7zd-WR-HUR">
@@ -315,7 +261,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Ppk-PV-peB"/>
+        <segue reference="1wG-ed-tXg"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="network" catalog="system" width="128" height="121"/>
@@ -325,9 +271,6 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

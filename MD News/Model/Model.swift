@@ -21,7 +21,7 @@ struct Article: Codable {
     let fields: Field?
 }
 struct Field: Codable{
-    let body: String // 🅰️HTML
+    let body: String?
     let thumbnail: String?
     let trailText: String?
     

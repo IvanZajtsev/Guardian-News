@@ -23,9 +23,6 @@ class FavoritesViewController: UIViewController {
     
     override func viewDidLoad() {
         
-        
-        
-//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: C.reusableCell)
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -42,20 +39,7 @@ class FavoritesViewController: UIViewController {
             self.activityIndicator.isHidden = true
             self.tableView.reloadData()
         }
-//        let manager = DataFileManager()
-//        print(manager.dataFilePath)
-//        let article = manager.loadArticleData()
-//
-//        let label = article[0].labelText
-//        let htmlText = article[0].bodyText
-//        let url = article[0].url
-//
-//
-//
-//        print("🟨 label" + "\(label)")
-//        print("🅱️ htmlText" + "\(htmlText)")
-//        print("🟦 url" + "\(url)")
-//        textView.attributedText = htmlText.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
+
     }
     
     private func loadArticlesFromPList() {
@@ -79,9 +63,8 @@ extension FavoritesViewController: UITableViewDataSource {
 }
 
 extension FavoritesViewController: UITableViewDelegate {
-    override func didReceiveMemoryWarning() {
-        print("🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️🅰️")
-    }
+    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             

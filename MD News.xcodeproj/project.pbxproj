@@ -69,20 +69,36 @@
 			isa = PBXGroup;
 			children = (
 				9DFDFC9027F36ED5001D7100 /* AppDelegate.swift */,
-				9DFDFC9427F36ED5001D7100 /* NewsViewController.swift */,
-				9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */,
-				9DFDFCB627F8D0E0001D7100 /* ArticleData.swift */,
-				9DFDFCB827F8D215001D7100 /* DataFileManager.swift */,
-				9DFDFCA827F372BF001D7100 /* Model.swift */,
+				9DFDFCBB27FA482C001D7100 /* Model */,
+				9DFDFCBA27FA4802001D7100 /* Contoller */,
 				9DFDFCA427F372AD001D7100 /* HeaderCell.swift */,
 				9DFDFCA527F372AD001D7100 /* HeaderCell.xib */,
 				9DFDFC9627F36ED5001D7100 /* Main.storyboard */,
 				9DFDFC9927F36ED6001D7100 /* Assets.xcassets */,
 				9DFDFC9B27F36ED6001D7100 /* LaunchScreen.storyboard */,
 				9DFDFC9E27F36ED6001D7100 /* Info.plist */,
-				9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */,
 			);
 			path = "MD News";
+			sourceTree = "<group>";
+		};
+		9DFDFCBA27FA4802001D7100 /* Contoller */ = {
+			isa = PBXGroup;
+			children = (
+				9DFDFC9427F36ED5001D7100 /* NewsViewController.swift */,
+				9DFDFCAA27F37630001D7100 /* ArticleViewController.swift */,
+				9DFDFCB427F85DB8001D7100 /* FavoritesViewController.swift */,
+			);
+			path = Contoller;
+			sourceTree = "<group>";
+		};
+		9DFDFCBB27FA482C001D7100 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				9DFDFCB627F8D0E0001D7100 /* ArticleData.swift */,
+				9DFDFCA827F372BF001D7100 /* Model.swift */,
+				9DFDFCB827F8D215001D7100 /* DataFileManager.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -331,7 +347,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -360,7 +376,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

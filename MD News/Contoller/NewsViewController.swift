@@ -7,9 +7,11 @@
 
 import UIKit
 import Network
+
 enum PossibleErrors: Error {
   case httpError
 }
+
 class NewsViewController: UIViewController {
     
     //MARK: - Private Data Structures
@@ -23,6 +25,7 @@ class NewsViewController: UIViewController {
         static let defaultURL = leadingOfurl + defaultQ + trailingOfurl
         static let image = UIColor(displayP3Red: 15 / 255, green: 15 / 255, blue: 15 / 255, alpha: 1).image()
         static let fromNewstoBodyScreen = "toBodyScreen"
+        static let estimatedRowHeight: CGFloat = 470
     }
     enum Downloading {
         case anotherPage, firstPage
@@ -45,16 +48,7 @@ class NewsViewController: UIViewController {
     private var isLoadingData = false
     
     private var currentPage = 1
-    
-    private var searchBarIsEmpty: Bool {
         
-        guard let text = searchController.searchBar.text else { return false }
-        return text.isEmpty
-        
-    }
-    //     Example: https://content.guardianapis.com/search?page=2&q=debate&api-key=test
-    
-    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -65,67 +59,132 @@ class NewsViewController: UIViewController {
     
     }
     override func viewWillAppear(_ animated: Bool) {
+        
         super.viewWillAppear(animated)
         tabBarController?.tabBar.isHidden = false
+        searchController.searchBar.isUserInteractionEnabled = true
+        
     }
 
     // MARK: - Private methods
     
     private func setupUI() {
         
-        activityIndicator.startAnimating()
-        activityIndicator.isHidden = false
-        view.bringSubviewToFront(activityIndicator)
-        searchController.searchBar.isUserInteractionEnabled = false
-        
         tabBarController?.tabBar.isHidden = false
         tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
-        tableView.estimatedRowHeight = 470
+        tableView.estimatedRowHeight = C.estimatedRowHeight
+        tableView.dataSource = self
+        tableView.delegate = self
         
-        self.downloadJSON(q: C.defaultQ, completion: { [weak self] result in
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.enablesReturnKeyAutomatically = true
+        searchController.obscuresBackgroundDuringPresentation = true
+        searchController.searchBar.placeholder = "Search"
+        
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
+        
+        
+        downloadFirstPage()
+        
+    }
+    
+    private func downloadFirstPage() {
+        
+        currentPage = 1
+        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        view.bringSubviewToFront(activityIndicator)
+        
+        searchController.searchBar.isUserInteractionEnabled = false
+        
+        
+        self.downloadJSON(q: q, completion: { [weak self] result in
             switch result {
             case .success(let moreData):
                 self?.news = moreData
+                self?.images.removeAll()
                 self?.downloadImages(from: .firstPage) {
-                    print("😳 loaded start pages")
                     DispatchQueue.main.async {
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.activityIndicator.isHidden = true
                         self?.tableView.reloadData()
                         self?.isLoadingData = false
-                        self?.activityIndicator.isHidden = true
-                        self?.searchController.searchBar.isUserInteractionEnabled = true
                     }
                 }
+                
             case .failure(let error):
                 if error is PossibleErrors {
-//                    print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️")
                     DispatchQueue.main.async {
-                        self?.showSimpleOKAlert(with: "Error whit HTTP request", and: "Search through text field")
+                        self?.showSimpleOKAlert(with: "Error with HTTP request", and: "Search through text field")
                         self?.searchController.searchBar.isUserInteractionEnabled = true
                         self?.tableView.tableFooterView = nil
                         self?.isLoadingData = false
                         self?.activityIndicator.isHidden = true
                     }
                 } else {
-                    // TODO: случилась ошибка в декодировании этой ..., обработай меня
+                    DispatchQueue.main.async {
+                        self?.showSimpleOKAlert(with: "Error decoding JSON", and: "Search through text field")
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.tableView.tableFooterView = nil
+                        self?.isLoadingData = false
+                        self?.activityIndicator.isHidden = true
+                    }
+                }
+            }
+        })
+    }
+    
+    private func downloadAnotherPage() {
+        
+        self.tableView.tableFooterView = createSpinnerFooter()
+        searchController.searchBar.isUserInteractionEnabled = false
+        
+        currentPage += 1
+        
+        downloadJSON(q: q, completion: { [weak self] result in
+            
+            switch result {
+            case .success(let moreData):
+                self?.news.response!.results! += moreData.response!.results!
+                self?.downloadImages(from: .anotherPage) {
+                    
+                    DispatchQueue.main.async {
+                        self?.tableView.tableFooterView = nil
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.tableView.reloadData()
+                        self?.isLoadingData = false
+                    }
+                }
+                
+            case .failure(let error):
+                if error is PossibleErrors {
+                    
+                    self?.currentPage -= 1
+                    
+                    DispatchQueue.main.async {
+                        self?.showSimpleOKAlert(with: "Error with HTTP request", and: "Search through text field")
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.tableView.tableFooterView = nil
+                        self?.isLoadingData = false
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self?.showSimpleOKAlert(with: "Error decoding JSON", and: "Search through text field")
+                        self?.searchController.searchBar.isUserInteractionEnabled = true
+                        self?.tableView.tableFooterView = nil
+                        self?.isLoadingData = false
+                        
+                    }
+                    
                 }
             }
             
         })
-        
-        searchController.searchResultsUpdater = self
-        
-        searchController.searchBar.delegate = self
-        searchController.searchBar.enablesReturnKeyAutomatically = true
-        
-        searchController.obscuresBackgroundDuringPresentation = true
-        searchController.searchBar.placeholder = "Search"
-        navigationItem.searchController = searchController
-        definesPresentationContext = true
-        tableView.dataSource = self
-        tableView.delegate = self
-        
-        
     }
+    
     private func showSimpleOKAlert(with alertTitle: String, and alertMessage: String) {
         let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
@@ -137,13 +196,9 @@ class NewsViewController: UIViewController {
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { path in
             if path.status == .satisfied {
-                DispatchQueue.main.sync {
-                   print("✅connect")
-                }
             } else {
                 DispatchQueue.main.async {
                     
-                    print("❌disconnect")
                     self.showSimpleOKAlert(with: "No connection", and: "Ensure you have connection")
                 }
             }
@@ -167,8 +222,8 @@ class NewsViewController: UIViewController {
         isLoadingData = true
         
         let urlString = createURL(with: q)
-        print("URL: " + "\(urlString)")
-        guard let url = URL(string: urlString) else { return }
+        
+        guard let url = URL(string: urlString) else { completion(.failure(PossibleErrors.httpError)); return }
         
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
             
@@ -177,19 +232,17 @@ class NewsViewController: UIViewController {
                   200...299 ~= statusCode,
                   error == nil else {
                       completion(.failure(PossibleErrors.httpError))
-                      print("completion(.failure(PossibleErrors.httpError))")
+                      
                       return
                   }
             do {
                 let answer = try JSONDecoder().decode(News.self, from: data)
-                
-                
                 completion(.success(answer))
-                print("completion(.success(answer))")
+                
             } catch {
+                
                 completion(.failure(error))
                 print(error)
-                print("completion(.failure(error))")
             }
             
             
@@ -215,9 +268,6 @@ class NewsViewController: UIViewController {
                 count = images.count
             }
             let countOfNewImages = (self.news.response?.results?.count ?? images.count) - images.count
-            //            print("countOfNewImages = " + "\(countOfNewImages)")
-            //            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
-            //            print("images.count = " + "\(  images.count)")
             
             if countOfNewImages == 0 {
                 completion()
@@ -246,7 +296,6 @@ class NewsViewController: UIViewController {
             for i in leftBound...rightBound {
                 group.enter()
                 self.downloadImage(index: i) { [weak self] result in
-                    print("task № \(i)  ✅")
                     
                     switch result {
                         
@@ -255,8 +304,7 @@ class NewsViewController: UIViewController {
                         self?.images[i] = image
                         
                     case .failure(_):
-                        // TODO: обработать этот кейс
-                        // вообще тут обр кейс httpError
+                        
                         break
                     }
                     group.leave()
@@ -271,7 +319,6 @@ class NewsViewController: UIViewController {
             }
         }
         group.notify(queue: .main) {
-            print("All 📸  concurrent tasks completed")
             self.tableView.reloadData()
         }
         
@@ -282,13 +329,15 @@ class NewsViewController: UIViewController {
         guard let results = news.response?.results,
               !results.isEmpty,
               let urlString = news.response?.results?[index]?.fields?.thumbnail,
-              let url = URL(string: urlString) else { return }
-        // TODO: сделать обработку ошибки http error
+              let url = URL(string: urlString) else {
+                  completion(.success(C.image))
+                  return
+              }
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
-
+            
             guard let data = data,
                   error == nil else {
-                      // TODO: completion(.httpError)
+                      completion(.success(C.image))
                       return
                   }
             completion(.success(UIImage(data: data) ?? C.image))
@@ -318,7 +367,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
         }
         
         cell.headerLabel.text = news.response?.results?[indexPath.row]?.webTitle
-        cell.trailingContextLabel.attributedText = news.response?.results?[indexPath.row]?.fields?.trailText?.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Arial", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
+        cell.trailingContextLabel.attributedText = news.response?.results?[indexPath.row]?.fields?.trailText?.convertHtmlToAttributedStringWithCSS(font: UIFont(name: "Sinhala Sangam MN", size: 20), csscolor: "white", lineheight: 9, csstextalign: "natural")
         cell.pictureImageView.image = (images.count == 0) ? C.image : images[indexPath.row]
         
         return cell
@@ -334,12 +383,14 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
         if segue.identifier == C.fromNewstoBodyScreen {
             guard let destinationVC = segue.destination as? ArticleViewController,
                   let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
             destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body"
             destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header"
             destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url"
+            
         }
     }
     
@@ -349,16 +400,13 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
         
         let position = scrollView.contentOffset.y
         let tabBarHeight = tabBarController?.tabBar.frame.size.height ?? 0
+        
         if position + scrollView.frame.size.height -  tabBarHeight > tableView.contentSize.height + 40 {
-            // fetch more data
-            // продолжаем, если процесс НЕ запущен
-            guard !isLoadingData else {
-                // we are already fetching more data
-                return
-            }
-            guard (news.response?.pages ?? -1 ) != currentPage && (news.response?.pages ?? -1 ) != 0 else {
+            
+            guard !isLoadingData else { return }
+            
+            guard (news.response?.pages ?? currentPage ) != currentPage && (news.response?.pages ?? -1 ) != 0 else {
                 
-//                print("🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈🌈")
                 DispatchQueue.main.async {
                     self.showSimpleOKAlert(with: "No more articles", and: "Search through text field")
                     self.searchController.searchBar.isUserInteractionEnabled = true
@@ -368,44 +416,8 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
                 return
             }
             
-            self.tableView.tableFooterView = createSpinnerFooter()
-            searchController.searchBar.isUserInteractionEnabled = false
-//            print("✅ loading")
-            
-            currentPage += 1
-            
-            downloadJSON(q: q, completion: { [weak self] result in
-                
-                switch result {
-                case .success(let moreData):
-                    self?.news.response!.results! += moreData.response!.results!
-                    self?.downloadImages(from: .anotherPage) {
-                        
-                        DispatchQueue.main.async {
-                            self?.tableView.tableFooterView = nil
-                            self?.searchController.searchBar.isUserInteractionEnabled = true
-                            self?.tableView.reloadData()
-                            self?.isLoadingData = false
-                        }
-                    }
-                    
-                case .failure(let error):
-                    if error is PossibleErrors {
-                        
-                        self?.currentPage -= 1
-//                        print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️ current page " + "\(self?.currentPage)" + "\(self?.news.response?.pages)")
-                        DispatchQueue.main.async {
-                            self?.showSimpleOKAlert(with: "Error whit HTTP request", and: "Search through text field")
-                            self?.searchController.searchBar.isUserInteractionEnabled = true
-                            self?.tableView.tableFooterView = nil
-                            self?.isLoadingData = false
-                        }
-                    } else {
-                        // TODO: случилась ошибка в декодировании этой ..., обработай меня
-                    }
-                }
-                
-            })
+            downloadAnotherPage()
+        
         }
     }
 }
@@ -420,6 +432,7 @@ extension NewsViewController: UISearchResultsUpdating {
 }
 
 // MARK: - UISearchBarDelegate
+
 extension NewsViewController: UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -431,54 +444,19 @@ extension NewsViewController: UISearchBarDelegate {
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
         guard let searchText = searchController.searchBar.text,
               !searchText.isEmpty,
-              searchText.count > 2 else {
-                  return
-              }
+              searchText.count > 2 else { return }
+        
         q = searchText.filter {!$0.isWhitespace}
         
-        currentPage = 1
-        
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
-        view.bringSubviewToFront(activityIndicator)
-        
-        searchController.searchBar.isUserInteractionEnabled = false
-        
-        self.downloadJSON(q: q, completion: { [weak self] result in
-            switch result {
-            case .success(let moreData):
-                self?.news = moreData
-                self?.images.removeAll()
-                self?.downloadImages(from: .firstPage) {
-                    DispatchQueue.main.async {
-                        self?.searchController.searchBar.isUserInteractionEnabled = true
-                        self?.activityIndicator.isHidden = true
-                        self?.tableView.reloadData()
-                        self?.isLoadingData = false
-                    }
-                }
-                
-            case .failure(let error):
-                if error is PossibleErrors {
-//                    print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️")
-                    DispatchQueue.main.async {
-                        self?.showSimpleOKAlert(with: "Error whit HTTP request", and: "Search through text field")
-                        self?.searchController.searchBar.isUserInteractionEnabled = true
-                        self?.tableView.tableFooterView = nil
-                        self?.isLoadingData = false
-                        self?.activityIndicator.isHidden = true
-                    }
-                } else {
-                    // TODO: случилась ошибка в декодировании этой ..., обработай меня
-                }
-            }
-        })
+        downloadFirstPage()
         
     }
     
 }
+    // MARK: - UIColor Extension
 
 extension UIColor {
     func image(_ size: CGSize = CGSize(width: 5, height: 3)) -> UIImage {
