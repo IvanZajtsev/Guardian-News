@@ -12,6 +12,7 @@ struct News: Codable {
 }
 struct Response: Codable {
     var results: [Article?]?
+    // тут будет поле pages которые вообще доступны
 }
 
 struct Article: Codable {

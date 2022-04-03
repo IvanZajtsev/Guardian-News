@@ -92,6 +92,11 @@ class NewsViewController: UIViewController {
                     }
                 }
             case .failure(_):
+                
+                //🟨 либо 404
+                
+                //🟨 либо ошибка декодирования
+                
                 break
             }
             
@@ -133,7 +138,25 @@ class NewsViewController: UIViewController {
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
             
             guard let data = data,
-                  error == nil else { return }
+                  let statusCode = (response as? HTTPURLResponse)?.statusCode,
+                  200...299 ~= statusCode,
+                  error == nil else {
+                      
+                      // TODO: completion(.failure(error!))
+                      // TODO: убрать форсе анвреп и мб сделать другие кейсы для ошибок? мб так что дата нил а ошибка не нил и ляжет приложение
+                      
+                      
+                      print("🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️🟦🅰️" + "\(data)" + "\(response)" + "\(error)")
+                      DispatchQueue.main.async {
+                          self.searchController.searchBar.isUserInteractionEnabled = true
+                          self.tableView.tableFooterView = nil
+                          self.isLoadingData = false
+                      }
+                      
+
+                    
+                      return
+                  }
             do {
                 let answer = try JSONDecoder().decode(News.self, from: data)
                 
@@ -162,23 +185,23 @@ class NewsViewController: UIViewController {
         switch from {
         case .anotherPage:
             if let newCountOfArticles = self.news.response?.results?.count   {
-//                🅰️ здесь все таки надо работать не со всем списком саттьей, в котором есть и новые, а только с новыми
+                //                🅰️ здесь все таки надо работать не со всем списком саттьей, в котором есть и новые, а только с новыми
                 // а то вдруг новые не могут скачаться и мы весь массив убьем....
                 count = newCountOfArticles
             } else {
-    //            count = 0
+                //            count = 0
                 count = images.count
             }
             let countOfNewImages = (self.news.response?.results?.count ?? images.count) - images.count
-//            print("countOfNewImages = " + "\(countOfNewImages)")
-//            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
-//            print("images.count = " + "\(  images.count)")
+            //            print("countOfNewImages = " + "\(countOfNewImages)")
+            //            print("self.news.response?.results?.count ?? images.count = " + "\(self.news.response?.results?.count ?? images.count)")
+            //            print("images.count = " + "\(  images.count)")
             
             
             if countOfNewImages == 0 {
                 return
             }
-            print(countOfNewImages)
+//            print(countOfNewImages)
             leftBound = count - countOfNewImages
             rightBound = count - 1
             images += [UIImage](repeating: C.image, count: countOfNewImages)
@@ -188,8 +211,8 @@ class NewsViewController: UIViewController {
                   responseCount != 0 else { rightBound = 0; return }
             rightBound = responseCount - 1
             images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
-            print(images.count)
-            print("❌")
+//            print(images.count)
+//            print("❌")
         }
         /*
          // 🟨 короче если новых кратинок нет то надо отед=льно это обработать!
@@ -222,14 +245,14 @@ class NewsViewController: UIViewController {
             
         }
     }
-
+    
     private func downloadImage(index: Int, completion: @escaping (Result<UIImage, Error>) -> ())  {
         
         guard let urlString = news.response?.results?[index]?.fields?.thumbnail,
               let url = URL(string: urlString) else { return }
-//        print(#function + "😳  \(Thread.current.qualityOfService.rawValue)")
+        //        print(#function + "😳  \(Thread.current.qualityOfService.rawValue)")
         URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
-//            print(#function + "✅  \(Thread.current.qualityOfService.rawValue)")
+            //            print(#function + "✅  \(Thread.current.qualityOfService.rawValue)")
             guard let data = data,
                   error == nil else {
                       // completion(.failure())
@@ -305,6 +328,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
                 
                 switch result {
                 case .success(let moreData):
+//                    print(moreData.response!)
                     self?.news.response!.results! += moreData.response!.results!
                     self?.downloadImages(from: .anotherPage) {
                         
