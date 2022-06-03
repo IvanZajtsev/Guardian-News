@@ -14,6 +14,7 @@ enum PossibleErrors: Error {
 
 class NewsViewController: UIViewController {
     
+    
     //MARK: - Private Data Structures
     
     private enum C {
