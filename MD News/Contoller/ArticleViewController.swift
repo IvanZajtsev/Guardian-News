@@ -28,11 +28,32 @@ class ArticleViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     @IBOutlet weak var label: UILabel!
     
-    @IBOutlet weak var goToSourceButton: UIBarButtonItem!
-    @IBOutlet weak var favoritesButton: UIBarButtonItem!
-    @IBOutlet weak var shareButton: UIBarButtonItem!
+//    @IBOutlet weak var goToSourceButton: UIBarButtonItem!
+    
+    private lazy var goToSourceButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(systemName: "network"), style: .plain, target: nil, action: nil)
+
+        return button
+    }()
+    
+//    @IBOutlet weak var favoritesButton: UIBarButtonItem!
+    
+    private lazy var favoritesButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: nil, action: nil)
+
+        return button
+    }()
+    
+//    @IBOutlet weak var shareButton: UIBarButtonItem!
+    
+    private lazy var shareButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(barButtonSystemItem: .action, target: nil, action: nil)
+        
+        return button
+    }()
     
     // MARK: - Actions
     
@@ -65,6 +86,12 @@ class ArticleViewController: UIViewController {
     // MARK: - Private methods
     
     private func setupUI() {
+        
+        
+        //
+        navigationItem.rightBarButtonItems = [shareButton, favoritesButton, goToSourceButton]
+
+        //
         
         label.text = header
         

@@ -34,13 +34,26 @@ class NewsViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+//    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.style = .large
+        activityIndicator.backgroundColor = .black
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return activityIndicator
+    }()
    
 //    @IBOutlet weak var tableView: UITableView!
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(HeaderCell.self, forCellReuseIdentifier: HeaderCell.identifier)
+        
+        // TODO: тут среднее значение стоит, я сам еще указываю размер клетки и короче определиться
+        
         tableView.estimatedRowHeight = C.estimatedRowHeight
         tableView.dataSource = self
         tableView.delegate = self
@@ -87,12 +100,18 @@ class NewsViewController: UIViewController {
 //        tableView.dataSource = self
 //        tableView.delegate = self
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
         
         let constraints = [
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            activityIndicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            activityIndicator.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            activityIndicator.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            activityIndicator.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ]
         
         NSLayoutConstraint.activate(constraints)

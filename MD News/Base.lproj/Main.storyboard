@@ -41,7 +41,6 @@
                     </view>
                     <navigationItem key="navigationItem" title="News" id="nO1-sb-KCh"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="rBW-Xs-Dff" id="SVN-4b-6a7"/>
                         <segue destination="eXG-1z-JPa" kind="show" identifier="toBodyScreen" id="Ppk-PV-peB"/>
                     </connections>
                 </viewController>
@@ -91,8 +90,6 @@
                     </view>
                     <navigationItem key="navigationItem" title="Discover favorites" largeTitleDisplayMode="always" id="I1e-9U-z6P"/>
                     <connections>
-                        <outlet property="activityIndicator" destination="Sjn-rK-qao" id="ZJn-dm-zSs"/>
-                        <outlet property="tableView" destination="R4m-6F-VfS" id="xMj-Wq-iW0"/>
                         <segue destination="eXG-1z-JPa" kind="show" identifier="fromFavToBody" id="1wG-ed-tXg"/>
                     </connections>
                 </viewController>
@@ -260,7 +257,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Ppk-PV-peB"/>
+        <segue reference="1wG-ed-tXg"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="network" catalog="system" width="128" height="121"/>
