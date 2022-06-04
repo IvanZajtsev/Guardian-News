@@ -42,7 +42,6 @@
                     <navigationItem key="navigationItem" title="News" id="nO1-sb-KCh"/>
                     <connections>
                         <outlet property="activityIndicator" destination="rBW-Xs-Dff" id="SVN-4b-6a7"/>
-                        <outlet property="tableView" destination="cfy-MK-TN4" id="Nop-0s-FRU"/>
                         <segue destination="eXG-1z-JPa" kind="show" identifier="toBodyScreen" id="Ppk-PV-peB"/>
                     </connections>
                 </viewController>
@@ -261,7 +260,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="1wG-ed-tXg"/>
+        <segue reference="Ppk-PV-peB"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="network" catalog="system" width="128" height="121"/>

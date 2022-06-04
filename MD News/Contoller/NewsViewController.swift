@@ -18,7 +18,7 @@ class NewsViewController: UIViewController {
     //MARK: - Private Data Structures
     
     private enum C {
-        static let reuseIdentifier = "ReusableCell"
+        static let reuseIdentifier = "reusableCell"
         static let nibName = "HeaderCell"
         static let leadingOfurl = "https://content.guardianapis.com/search?"
         static let trailingOfurl = "api-key=908cb2e6-b6b3-4c92-87db-34afa38367d7&format=json&show-fields=thumbnail,trailText,body"
@@ -36,7 +36,17 @@ class NewsViewController: UIViewController {
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
    
-    @IBOutlet weak var tableView: UITableView!
+//    @IBOutlet weak var tableView: UITableView!
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(HeaderCell.self, forCellReuseIdentifier: HeaderCell.identifier)
+        tableView.estimatedRowHeight = C.estimatedRowHeight
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        return tableView
+    }()
     
     private var news = News(response: Response(results: [Article]()))
     
@@ -72,10 +82,21 @@ class NewsViewController: UIViewController {
     private func setupUI() {
         
         tabBarController?.tabBar.isHidden = false
-        tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
-        tableView.estimatedRowHeight = C.estimatedRowHeight
-        tableView.dataSource = self
-        tableView.delegate = self
+//        tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
+//        tableView.estimatedRowHeight = C.estimatedRowHeight
+//        tableView.dataSource = self
+//        tableView.delegate = self
+        view.addSubview(tableView)
+        
+        let constraints = [
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+        
         
         searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
@@ -354,7 +375,7 @@ class NewsViewController: UIViewController {
     
 }
 
-//MARK: - UITableViewDataSource
+//MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -381,6 +402,11 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
             
         }
         
+    }
+    // TODO: надо посчитать размер ячейки а не угадывать
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 526
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
