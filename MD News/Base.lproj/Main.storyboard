@@ -166,30 +166,15 @@
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="AdK-IW-hs6">
                         <rightBarButtonItems>
-                            <barButtonItem title="Go To Source" image="network" catalog="system" id="H8M-Qj-DQN">
-                                <connections>
-                                    <action selector="goToSourceTapped:" destination="eXG-1z-JPa" id="vHm-0b-9aU"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Item" image="star" catalog="system" id="2XU-zL-eg9">
-                                <connections>
-                                    <action selector="addToFavoritesTapped:" destination="eXG-1z-JPa" id="I3A-dN-OJr"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="action" id="nF9-Hz-Itx">
-                                <connections>
-                                    <action selector="shareButtonPressed:" destination="eXG-1z-JPa" id="puG-yE-tv8"/>
-                                </connections>
-                            </barButtonItem>
+                            <barButtonItem title="Go To Source" image="network" catalog="system" id="H8M-Qj-DQN"/>
+                            <barButtonItem title="Item" image="star" catalog="system" id="2XU-zL-eg9"/>
+                            <barButtonItem systemItem="action" id="nF9-Hz-Itx"/>
                         </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="ihu-Im-Dtg" id="sje-jd-Aon"/>
-                        <outlet property="favoritesButton" destination="2XU-zL-eg9" id="8gk-jY-RAG"/>
-                        <outlet property="goToSourceButton" destination="H8M-Qj-DQN" id="tY5-2D-Wde"/>
                         <outlet property="label" destination="hVY-P1-Y5R" id="hzT-2E-1IC"/>
                         <outlet property="scrollView" destination="S88-l8-R9R" id="UMk-6M-CKM"/>
-                        <outlet property="shareButton" destination="nF9-Hz-Itx" id="a1g-Ny-xa9"/>
                         <outlet property="textView" destination="ImO-vb-tde" id="ABn-lK-O6J"/>
                     </connections>
                 </viewController>
