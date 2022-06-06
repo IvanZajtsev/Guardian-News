@@ -416,7 +416,16 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             
-            self.performSegue(withIdentifier: C.fromNewstoBodyScreen, sender: self)
+//            self.performSegue(withIdentifier: C.fromNewstoBodyScreen, sender: self)
+            let nextVC = ArticleViewController()
+            nextVC.body = self.news.response?.results?[indexPath.row]?.fields?.body ?? "body"
+            nextVC.header = self.news.response?.results?[indexPath.row]?.webTitle ?? "header"
+            nextVC.url = self.news.response?.results?[indexPath.row]?.webUrl ?? "url"
+            
+            self.navigationController?.pushViewController(nextVC, animated: false)
+            
+            
+            
             self.tableView.deselectRow(at: indexPath, animated: true)
             
         }
@@ -428,17 +437,17 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
         return 526
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        if segue.identifier == C.fromNewstoBodyScreen {
-            guard let destinationVC = segue.destination as? ArticleViewController,
-                  let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body"
-            destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header"
-            destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url"
-            
-        }
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//
+//        if segue.identifier == C.fromNewstoBodyScreen {
+//            guard let destinationVC = segue.destination as? ArticleViewController,
+//                  let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
+//            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body"
+//            destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header"
+//            destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url"
+//
+//        }
+//    }
     
     // MARK: - ScrollView method
     
