@@ -18,16 +18,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = UIWindow()
         
         let tabBarController = UITabBarController()
-        let thirdVC = FavoritesViewController()
+//        let thirdVC = FavoritesViewController()
         
-        thirdVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 777)
+//        thirdVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 777)
         
-        let startVC = NewsViewController()
         
-        let navigationController = UINavigationController(rootViewController: startVC)
-        navigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 666)
         
-        tabBarController.viewControllers = [navigationController, thirdVC]
+        let firstNavigationController = UINavigationController(rootViewController: NewsViewController())
+        firstNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 666)
+        
+        let secondNavigationController = UINavigationController(rootViewController: FavoritesViewController())
+        secondNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 777)
+        
+        tabBarController.viewControllers = [firstNavigationController, secondNavigationController]
         
         // window.rootViewController = navigationController
         window.rootViewController = tabBarController

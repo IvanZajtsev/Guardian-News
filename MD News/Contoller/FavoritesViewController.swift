@@ -117,13 +117,22 @@ extension FavoritesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             
-            self.performSegue(withIdentifier: C.segueIdentifier, sender: self)
+//            self.performSegue(withIdentifier: C.segueIdentifier, sender: self)
+            
+            let nextVC = ArticleViewController()
+            nextVC.body = self.arcticles[indexPath.row].bodyText
+            nextVC.header = self.arcticles[indexPath.row].labelText
+            nextVC.url = self.arcticles[indexPath.row].url
+            nextVC.isFavScreenOpened = true
+            
+            self.navigationController?.pushViewController(nextVC, animated: false)
+            
             self.tableView.deselectRow(at: indexPath, animated: true)
             
         }
         
     }
-    
+    /*
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == C.segueIdentifier {
             guard let destinationVC = segue.destination as? ArticleViewController,
@@ -135,4 +144,5 @@ extension FavoritesViewController: UITableViewDelegate {
             
         }
     }
+     */
 }
