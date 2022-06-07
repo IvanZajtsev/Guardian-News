@@ -9,11 +9,10 @@ import UIKit
 import Network
 
 enum PossibleErrors: Error {
-  case httpError
+    case httpError
 }
 
 class NewsViewController: UIViewController {
-    
     
     //MARK: - Private Data Structures
     
@@ -32,9 +31,19 @@ class NewsViewController: UIViewController {
         case anotherPage, firstPage
     }
     
-    // MARK: - Private Properties
+    private var news = News(response: Response(results: [Article]()))
     
-//    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    private var images = [UIImage]()
+    
+    private let searchController = UISearchController(searchResultsController: nil)
+    
+    private var q = C.defaultQ
+    
+    private var isLoadingData = false
+    
+    private var currentPage = 1
+    
+    // MARK: - UI
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
@@ -44,8 +53,6 @@ class NewsViewController: UIViewController {
         
         return activityIndicator
     }()
-   
-//    @IBOutlet weak var tableView: UITableView!
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -61,18 +68,7 @@ class NewsViewController: UIViewController {
         return tableView
     }()
     
-    private var news = News(response: Response(results: [Article]()))
     
-    private var images = [UIImage]()
-    
-    private let searchController = UISearchController(searchResultsController: nil)
-    
-    private var q = C.defaultQ
-    
-    private var isLoadingData = false
-    
-    private var currentPage = 1
-        
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -80,7 +76,7 @@ class NewsViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         monitorNetwork()
-    
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         
@@ -89,16 +85,13 @@ class NewsViewController: UIViewController {
         searchController.searchBar.isUserInteractionEnabled = true
         
     }
-
+    
     // MARK: - Private methods
     
     private func setupUI() {
         
         tabBarController?.tabBar.isHidden = false
-//        tableView.register(UINib(nibName: C.nibName, bundle: nil), forCellReuseIdentifier: C.reuseIdentifier)
-//        tableView.estimatedRowHeight = C.estimatedRowHeight
-//        tableView.dataSource = self
-//        tableView.delegate = self
+        
         view.addSubview(tableView)
         view.addSubview(activityIndicator)
         
@@ -229,7 +222,7 @@ class NewsViewController: UIViewController {
     private func showSimpleOKAlert(with alertTitle: String, and alertMessage: String) {
         let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true) 
+        present(alert, animated: true)
         
     }
     
@@ -332,7 +325,7 @@ class NewsViewController: UIViewController {
             
             images += [UIImage](repeating: C.image, count: self.news.response?.results?.count ?? 0)
         }
-
+        
         if rightBound != 0 {
             for i in leftBound...rightBound {
                 group.enter()
@@ -350,7 +343,7 @@ class NewsViewController: UIViewController {
                     }
                     group.leave()
                 }
-               
+                
             }
         }
         completion()
@@ -416,7 +409,6 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             
-//            self.performSegue(withIdentifier: C.fromNewstoBodyScreen, sender: self)
             let nextVC = ArticleViewController()
             nextVC.body = self.news.response?.results?[indexPath.row]?.fields?.body ?? "body"
             nextVC.header = self.news.response?.results?[indexPath.row]?.webTitle ?? "header"
@@ -436,18 +428,6 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 526
     }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//
-//        if segue.identifier == C.fromNewstoBodyScreen {
-//            guard let destinationVC = segue.destination as? ArticleViewController,
-//                  let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-//            destinationVC.body = news.response?.results?[selectedRow]?.fields?.body ?? "body"
-//            destinationVC.header = news.response?.results?[selectedRow]?.webTitle ?? "header"
-//            destinationVC.url = news.response?.results?[selectedRow]?.webUrl ?? "url"
-//
-//        }
-//    }
     
     // MARK: - ScrollView method
     
@@ -472,7 +452,7 @@ extension NewsViewController: UITableViewDataSource, UITableViewDelegate {
             }
             
             downloadAnotherPage()
-        
+            
         }
     }
 }
@@ -511,7 +491,7 @@ extension NewsViewController: UISearchBarDelegate {
     }
     
 }
-    // MARK: - UIColor Extension
+// MARK: - UIColor Extension
 
 extension UIColor {
     func image(_ size: CGSize = CGSize(width: 5, height: 3)) -> UIImage {

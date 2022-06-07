@@ -13,6 +13,7 @@ class ArticleViewController: UIViewController {
     private enum Constants {
         static let inset: CGFloat = 10
     }
+    
     var body: String = "Loading..."
     var header: String = "Loading..."
     var url: String = "URL"
@@ -25,20 +26,10 @@ class ArticleViewController: UIViewController {
     static var picWidth = 0
     static var picHeight = 0
     
+    // MARK: - ScrollView components
     
-    // MARK: - <#Section Handler#>
-    
-    lazy var contentViewSize = CGSize(width: self.view.frame.width, height: self.view.frame.height + 3000)
-    
-    
-    // MARK: - Outlets
-    
-    //    @IBOutlet weak var scrollView: UIScrollView!
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-//        scrollView.backgroundColor = .lightGray
-//        scrollView.frame = self.view.bounds
-//        scrollView.contentSize = contentViewSize
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
         return scrollView
@@ -46,18 +37,15 @@ class ArticleViewController: UIViewController {
     
     private lazy var infoView: UIView = {
         let infoView = UIView()
-//        infoView.backgroundColor = .darkGray
-        infoView.frame.size = contentViewSize
         infoView.translatesAutoresizingMaskIntoConstraints = false
         
         return infoView
         
     }()
     
-    // MARK: - <#Section Handler#>
+    // MARK: - Content of ScrollView
     
-    //    @IBOutlet weak var textView: UITextView!
-    var textView: UITextView = {
+    private lazy var textView: UITextView = {
         let textView = UITextView()
         textView.textAlignment = .natural
         textView.translatesAutoresizingMaskIntoConstraints = false
@@ -65,44 +53,26 @@ class ArticleViewController: UIViewController {
         
         return textView
     }()
-    //    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
         activityIndicator.style = .medium
-//        activityIndicator.backgroundColor = .red
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         return activityIndicator
     }()
     
-    //    @IBOutlet weak var label: UILabel!
-    
-    lazy var label: UILabel = {
+    private lazy var label: UILabel = {
         let label = UILabel()
         label.textAlignment = .natural
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.boldSystemFont(ofSize: 30)
-//        label.backgroundColor = .red
         label.numberOfLines = 0
         
         return label
     }()
     
-//    private lazy var stackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.spacing = 0
-//        stackView.axis = .vertical
-//        stackView.backgroundColor = .systemGray3
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//
-//        return stackView
-//
-//    }()
-    
-    // MARK: - <#Section Handler#>
-    
-    //    @IBOutlet weak var goToSourceButton: UIBarButtonItem!
+    // MARK: - Bar Button Items
     
     private lazy var goToSourceButton: UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "network"), style: .plain, target: self, action: #selector(goToSourceTapped))
@@ -110,15 +80,11 @@ class ArticleViewController: UIViewController {
         return button
     }()
     
-    //    @IBOutlet weak var favoritesButton: UIBarButtonItem!
-    
     private lazy var favoritesButton: UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addToFavoritesTapped))
         
         return button
     }()
-    
-    //    @IBOutlet weak var shareButton: UIBarButtonItem!
     
     private lazy var shareButton: UIBarButtonItem = {
         let button = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareButtonPressed))
@@ -147,23 +113,23 @@ class ArticleViewController: UIViewController {
         }
     }
     
-    // MARK: - Lifcycle
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
     override func viewDidLayoutSubviews() {
+        // TODO: сделать констраинтами это
         scrollView.frame = self.view.bounds
-
+        
     }
     
     // MARK: - Private methods
     
     private func setupUI() {
         
-        print("1")
-        //
+        
         self.view.addSubview(scrollView)
         scrollView.addSubview(infoView)
         
@@ -172,7 +138,7 @@ class ArticleViewController: UIViewController {
         infoView.addSubview(textView)
         
         
-
+        
         // на скролл вью нет костраинтов потому что  ]сразу фрейм ему прописал чтобы не мучатьтся
         let constraints = [
             infoView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
@@ -188,20 +154,18 @@ class ArticleViewController: UIViewController {
             
             label.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: Constants.inset),
             label.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -Constants.inset),
-//            label.topAnchor.constraint(equalTo: activityIndicator.topAnchor),
+            //            label.topAnchor.constraint(equalTo: activityIndicator.topAnchor),
             label.bottomAnchor.constraint(equalTo: textView.topAnchor, constant: -Constants.inset),
             
             textView.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
-//            label.topAnchor.constraint(equalTo: activityIndicator.topAnchor),
+            //            label.topAnchor.constraint(equalTo: activityIndicator.topAnchor),
             textView.bottomAnchor.constraint(equalTo: infoView.bottomAnchor),
         ]
         
         NSLayoutConstraint.activate(constraints)
         
-        navigationItem.rightBarButtonItems = [shareButton, favoritesButton, goToSourceButton]
-        
-        //
+        navigationItem.rightBarButtonItems = [goToSourceButton, favoritesButton, shareButton]
         
         label.text = header
         
@@ -231,9 +195,6 @@ class ArticleViewController: UIViewController {
             self.goToSourceButton.isEnabled = true
             if !self.isFavScreenOpened { self.favoritesButton.isEnabled = true }
             self.shareButton.isEnabled = true
-            print("2 + \(self.view.subviews)")
-            
-            
         }
     }
     

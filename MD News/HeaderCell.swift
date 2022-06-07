@@ -22,7 +22,6 @@ class HeaderCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        print("🟦 init lazy var")
         return imageView
     }()
     

@@ -13,12 +13,11 @@ class FavoritesViewController: UIViewController {
     
     enum C {
         static let reusableCell = "anotherReusableCell"
-        static let segueIdentifier = "fromFavToBody"
     }
     
-    //    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    var arcticles: [ArticleData] = []
     
-    //    @IBOutlet weak var tableView: UITableView!
+    // MARK: - UI
     
     private lazy var activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView()
@@ -28,8 +27,6 @@ class FavoritesViewController: UIViewController {
         
         return activityIndicator
     }()
-    
-    //    @IBOutlet weak var tableView: UITableView!
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -41,10 +38,9 @@ class FavoritesViewController: UIViewController {
         return tableView
     }()
     
-    var arcticles: [ArticleData] = []
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
-        
         setupUI()
     }
     
@@ -62,6 +58,8 @@ class FavoritesViewController: UIViewController {
         }
         
     }
+    
+    // MARK: - Private Methods
     
     private func setupUI() {
         
@@ -109,15 +107,13 @@ extension FavoritesViewController: UITableViewDataSource {
     
 }
 
-    // MARK: - UITableViewDelegate
+// MARK: - UITableViewDelegate
 
 extension FavoritesViewController: UITableViewDelegate {
     
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
-            
-//            self.performSegue(withIdentifier: C.segueIdentifier, sender: self)
             
             let nextVC = ArticleViewController()
             nextVC.body = self.arcticles[indexPath.row].bodyText
@@ -132,17 +128,5 @@ extension FavoritesViewController: UITableViewDelegate {
         }
         
     }
-    /*
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == C.segueIdentifier {
-            guard let destinationVC = segue.destination as? ArticleViewController,
-                  let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-            destinationVC.body = arcticles[selectedRow].bodyText
-            destinationVC.header = arcticles[selectedRow].labelText
-            destinationVC.url = arcticles[selectedRow].url
-            destinationVC.isFavScreenOpened = true
-            
-        }
-    }
-     */
+    
 }
