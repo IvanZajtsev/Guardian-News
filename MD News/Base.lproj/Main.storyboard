@@ -171,12 +171,6 @@
                             <barButtonItem systemItem="action" id="nF9-Hz-Itx"/>
                         </rightBarButtonItems>
                     </navigationItem>
-                    <connections>
-                        <outlet property="activityIndicator" destination="ihu-Im-Dtg" id="sje-jd-Aon"/>
-                        <outlet property="label" destination="hVY-P1-Y5R" id="hzT-2E-1IC"/>
-                        <outlet property="scrollView" destination="S88-l8-R9R" id="UMk-6M-CKM"/>
-                        <outlet property="textView" destination="ImO-vb-tde" id="ABn-lK-O6J"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bFk-iY-1J5" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
