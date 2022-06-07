@@ -105,7 +105,7 @@ class ArticleViewController: UIViewController {
     //    @IBOutlet weak var goToSourceButton: UIBarButtonItem!
     
     private lazy var goToSourceButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "network"), style: .plain, target: nil, action: nil)
+        let button = UIBarButtonItem(image: UIImage(systemName: "network"), style: .plain, target: self, action: #selector(goToSourceTapped))
         
         return button
     }()
@@ -113,7 +113,7 @@ class ArticleViewController: UIViewController {
     //    @IBOutlet weak var favoritesButton: UIBarButtonItem!
     
     private lazy var favoritesButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: nil, action: nil)
+        let button = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addToFavoritesTapped))
         
         return button
     }()
@@ -121,24 +121,24 @@ class ArticleViewController: UIViewController {
     //    @IBOutlet weak var shareButton: UIBarButtonItem!
     
     private lazy var shareButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(barButtonSystemItem: .action, target: nil, action: nil)
+        let button = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareButtonPressed))
         
         return button
     }()
     
     // MARK: - Actions
     
-    @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
+    @objc private func shareButtonPressed() {
         
         let vc = UIActivityViewController(activityItems: [url], applicationActivities: [])
         present(vc, animated: true)
     }
     
-    @IBAction func addToFavoritesTapped(_ sender: UIBarButtonItem) {
+    @objc private func addToFavoritesTapped() {
         addToFavorites()
     }
     
-    @IBAction func goToSourceTapped(_ sender: UIBarButtonItem) {
+    @objc private func goToSourceTapped() {
         
         guard let urlToOpen = URL(string: url) else { return }
         
