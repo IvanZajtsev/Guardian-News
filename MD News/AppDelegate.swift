@@ -18,21 +18,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let window = UIWindow()
         
         let tabBarController = UITabBarController()
-//        let thirdVC = FavoritesViewController()
-        
-//        thirdVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 777)
-        
-        
         
         let firstNavigationController = UINavigationController(rootViewController: NewsViewController())
-        firstNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 666)
+        firstNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 10)
         
         let secondNavigationController = UINavigationController(rootViewController: FavoritesViewController())
-        secondNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 777)
+        secondNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 20)
         
         tabBarController.viewControllers = [firstNavigationController, secondNavigationController]
         
-        // window.rootViewController = navigationController
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
         
