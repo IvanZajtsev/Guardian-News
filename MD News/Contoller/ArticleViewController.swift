@@ -10,6 +10,9 @@ import UIKit
 
 class ArticleViewController: UIViewController {
     
+    private enum Constants {
+        static let inset: CGFloat = 10
+    }
     
     var body: String = "Loading..."
     var header: String = "Loading..."
@@ -23,48 +26,146 @@ class ArticleViewController: UIViewController {
     static var picWidth = 0
     static var picHeight = 0
     
-    // MARK: - Outlets
+    // MARK: - ScrollView components
     
-    @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet weak var textView: UITextView!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var label: UILabel!
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return scrollView
+    }()
     
-    @IBOutlet weak var goToSourceButton: UIBarButtonItem!
-    @IBOutlet weak var favoritesButton: UIBarButtonItem!
-    @IBOutlet weak var shareButton: UIBarButtonItem!
+    private lazy var infoView: UIView = {
+        let infoView = UIView()
+        infoView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return infoView
+        
+    }()
+    
+    // MARK: - Content of ScrollView
+    
+    private lazy var textView: UITextView = {
+        let textView = UITextView()
+        textView.textAlignment = .natural
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        textView.isScrollEnabled = false
+        
+        return textView
+    }()
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.style = .medium
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return activityIndicator
+    }()
+    
+    private lazy var label: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .natural
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = UIFont.boldSystemFont(ofSize: 30)
+        label.numberOfLines = 0
+        
+        return label
+    }()
+    
+    // MARK: - Bar Button Items
+    
+    private lazy var goToSourceButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(systemName: "network"), style: .plain, target: self, action: #selector(goToSourceTapped))
+        
+        return button
+    }()
+    
+    private lazy var favoritesButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(image: UIImage(systemName: "star"), style: .plain, target: self, action: #selector(addToFavoritesTapped))
+        
+        return button
+    }()
+    
+    private lazy var shareButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareButtonPressed))
+        
+        return button
+    }()
     
     // MARK: - Actions
     
-    @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
+    @objc private func shareButtonPressed() {
         
         let vc = UIActivityViewController(activityItems: [url], applicationActivities: [])
         present(vc, animated: true)
     }
     
-    @IBAction func addToFavoritesTapped(_ sender: UIBarButtonItem) {
+    @objc private func addToFavoritesTapped() {
         addToFavorites()
     }
     
-    @IBAction func goToSourceTapped(_ sender: UIBarButtonItem) {
+    @objc private func goToSourceTapped() {
         
         guard let urlToOpen = URL(string: url) else { return }
         
         if UIApplication.shared.canOpenURL(urlToOpen) {
-             UIApplication.shared.open(urlToOpen, options: [:], completionHandler: nil)
+            UIApplication.shared.open(urlToOpen, options: [:], completionHandler: nil)
         }
     }
     
-    // MARK: - Lifcycle
+    // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
+    override func viewDidLayoutSubviews() {
+        // TODO: сделать констраинтами это
+        scrollView.frame = self.view.bounds
+        
+    }
     
     // MARK: - Private methods
     
     private func setupUI() {
+        
+        
+        self.view.addSubview(scrollView)
+        scrollView.addSubview(infoView)
+        
+        infoView.addSubview(activityIndicator)
+        infoView.addSubview(label)
+        infoView.addSubview(textView)
+        
+        
+        
+        // на скролл вью нет костраинтов потому что  ]сразу фрейм ему прописал чтобы не мучатьтся
+        let constraints = [
+            infoView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            infoView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            infoView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            infoView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            infoView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            
+            activityIndicator.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: Constants.inset),
+            activityIndicator.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -Constants.inset),
+            activityIndicator.topAnchor.constraint(equalTo: infoView.topAnchor, constant: Constants.inset),
+            activityIndicator.bottomAnchor.constraint(equalTo: label.topAnchor, constant: -Constants.inset),
+            
+            label.leadingAnchor.constraint(equalTo: infoView.leadingAnchor, constant: Constants.inset),
+            label.trailingAnchor.constraint(equalTo: infoView.trailingAnchor, constant: -Constants.inset),
+            //            label.topAnchor.constraint(equalTo: activityIndicator.topAnchor),
+            label.bottomAnchor.constraint(equalTo: textView.topAnchor, constant: -Constants.inset),
+            
+            textView.leadingAnchor.constraint(equalTo: infoView.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: infoView.trailingAnchor),
+            //            label.topAnchor.constraint(equalTo: activityIndicator.topAnchor),
+            textView.bottomAnchor.constraint(equalTo: infoView.bottomAnchor),
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+        
+        navigationItem.rightBarButtonItems = [goToSourceButton, favoritesButton, shareButton]
         
         label.text = header
         
@@ -94,7 +195,6 @@ class ArticleViewController: UIViewController {
             self.goToSourceButton.isEnabled = true
             if !self.isFavScreenOpened { self.favoritesButton.isEnabled = true }
             self.shareButton.isEnabled = true
-            
         }
     }
     
@@ -103,7 +203,7 @@ class ArticleViewController: UIViewController {
         let manager = DataFileManager()
         activityIndicator.startAnimating()
         activityIndicator.isHidden = false
-
+        
         DispatchQueue.main.async {
             do {
                 try manager.saveArticleData(ArticleData(labelText: self.header, bodyText: self.modifiedBody, url: self.url))
@@ -155,3 +255,4 @@ extension String {
         }
     }
 }
+

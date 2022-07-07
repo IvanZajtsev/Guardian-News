@@ -14,7 +14,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        let window = UIWindow()
+        
+        let tabBarController = UITabBarController()
+        
+        let firstNavigationController = UINavigationController(rootViewController: NewsViewController())
+        firstNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 10)
+        
+        let secondNavigationController = UINavigationController(rootViewController: FavoritesViewController())
+        secondNavigationController.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites, tag: 20)
+        
+        tabBarController.viewControllers = [firstNavigationController, secondNavigationController]
+        
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        
+        self.window = window
+        
         return true
     }
 

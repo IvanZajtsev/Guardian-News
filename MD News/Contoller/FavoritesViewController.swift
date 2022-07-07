@@ -7,24 +7,41 @@
 
 import Foundation
 import UIKit
+import Network
 
 class FavoritesViewController: UIViewController {
     
     enum C {
         static let reusableCell = "anotherReusableCell"
-        static let segueIdentifier = "fromFavToBody"
     }
-    
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-    
-    @IBOutlet weak var tableView: UITableView!
     
     var arcticles: [ArticleData] = []
     
-    override func viewDidLoad() {
+    // MARK: - UI
+    
+    private lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.style = .large
+        activityIndicator.backgroundColor = .black
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
-        tableView.delegate = self
+        return activityIndicator
+    }()
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: C.reusableCell)
         tableView.dataSource = self
+        tableView.delegate = self
+        
+        return tableView
+    }()
+    
+    // MARK: - Lifecycle
+    
+    override func viewDidLoad() {
+        setupUI()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -39,13 +56,41 @@ class FavoritesViewController: UIViewController {
             self.activityIndicator.isHidden = true
             self.tableView.reloadData()
         }
-
+        
+    }
+    
+    // MARK: - Private Methods
+    
+    private func setupUI() {
+        
+        view.addSubview(tableView)
+        view.addSubview(activityIndicator)
+        
+        let constraints = [
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            activityIndicator.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            activityIndicator.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            activityIndicator.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            activityIndicator.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+        
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        view.bringSubviewToFront(activityIndicator)
     }
     
     private func loadArticlesFromPList() {
         arcticles = DataFileManager().loadArticleData()
     }
 }
+
+// MARK: - UITableViewDataSource
 
 extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -62,28 +107,26 @@ extension FavoritesViewController: UITableViewDataSource {
     
 }
 
+// MARK: - UITableViewDelegate
+
 extension FavoritesViewController: UITableViewDelegate {
     
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         DispatchQueue.main.async {
             
-            self.performSegue(withIdentifier: C.segueIdentifier, sender: self)
+            let nextVC = ArticleViewController()
+            nextVC.body = self.arcticles[indexPath.row].bodyText
+            nextVC.header = self.arcticles[indexPath.row].labelText
+            nextVC.url = self.arcticles[indexPath.row].url
+            nextVC.isFavScreenOpened = true
+            
+            self.navigationController?.pushViewController(nextVC, animated: false)
+            
             self.tableView.deselectRow(at: indexPath, animated: true)
             
         }
         
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == C.segueIdentifier {
-            guard let destinationVC = segue.destination as? ArticleViewController,
-                  let selectedRow = tableView.indexPathForSelectedRow?.row else {return}
-            destinationVC.body = arcticles[selectedRow].bodyText
-            destinationVC.header = arcticles[selectedRow].labelText
-            destinationVC.url = arcticles[selectedRow].url
-            destinationVC.isFavScreenOpened = true
-            
-        }
-    }
 }

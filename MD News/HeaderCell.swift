@@ -8,19 +8,90 @@
 import UIKit
 
 class HeaderCell: UITableViewCell {
-
-    @IBOutlet weak var pictureImageView: UIImageView!
-    @IBOutlet weak var headerLabel: UILabel!
-    @IBOutlet weak var trailingContextLabel: UILabel!
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    
+    private enum Constants {
+        static let inset: CGFloat = 10
     }
+    static let identifier = "reusableCell"
+    
+    // MARK: - UI
+        
+    lazy var pictureImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFit
+        
+        return imageView
+    }()
+        
+    lazy var headerLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.numberOfLines = 0
+        
+        return label
+    }()
+        
+    lazy var trailingContextLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = .white
+        label.numberOfLines = 0
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
+        return label
+    }()
+    
+    lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.spacing = 10
+        stackView.axis = .vertical
+        stackView.distribution = .fillEqually
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stackView
+    }()
+    
+    // MARK: - init
+    
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Private methods
+    
+    private func setupUI() {
+        contentView.addSubview(pictureImageView)
+        contentView.addSubview(headerLabel)
+        contentView.addSubview(trailingContextLabel)
+        contentView.addSubview(stackView)
+        
+        stackView.addArrangedSubview(headerLabel)
+        stackView.addArrangedSubview(trailingContextLabel)
+        
+        let constraints = [
+            pictureImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: Constants.inset),
+            pictureImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            pictureImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            // TODO: разобраться с шириной
+            // делаю вид что ширина сама как-то сделается
+            // TODO: переделать aspect ratio
+            pictureImageView.heightAnchor.constraint(equalTo: pictureImageView.widthAnchor, multiplier: 3 / 5, constant: 0),
+            // выше типа щазаписано aspect ratio
+            stackView.topAnchor.constraint(equalTo: pictureImageView.bottomAnchor, constant: Constants.inset),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.inset),
+            stackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.inset),
+            // сделаем пока руками ширину
+            // TODO: убрать константную ширину
+            stackView.heightAnchor.constraint(equalToConstant: 200)
+
+        ]
+        
+        NSLayoutConstraint.activate(constraints)
+    }
 }
